@@ -1,9 +1,35 @@
 const Post = require('../models/post');
+const Friend = require('../models/friend');
 const router = require('express').Router();
 
 router.get('/post',async(req,res,next)=>{
     if(res.locals.user){
         try{
+            const user = res.locals.user;
+            const allfriends = await Friend.find({userid: user.uid});
+            const allIds=[];
+            // allIds.push(user.uid);
+            const friends= allfriends.friends;
+            // foreach(allfriends.friends as yaar){
+            //     allIds.push(yaar.uid);
+            // }
+            const posts = await Post.find({userid: user.uid});
+            res.status(200).json(posts);
+
+        }catch(error){
+            res.status(500).json(error);
+        }
+        
+    }
+    else{
+        //redirect to login
+    }
+})
+
+router.get('/mypost',async(req,res,next)=>{
+    if(res.locals.user){
+        try{
+            const user = res.locals.user;
             const posts = await Post.findById(user.uid);
             res.status(200).json(posts);
 
@@ -27,7 +53,10 @@ router.post('/post',async(req,res)=>{
             })
         }
         catch(error){
-
+            res.status(500).json(error);
         }
+    }
+    else{
+        //redirect to login
     }
 })

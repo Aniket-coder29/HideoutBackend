@@ -4,7 +4,7 @@ const { getAuth } = require('firebase-admin/auth')
 
 class Middleware{
     async decodeToken(req,res,next){
-        console.log(req.headers);
+        // console.log(req.headers);
         if(req.headers.authorization){
             const token = req.headers.authorization.split(' ')[1];
             getAuth()
@@ -16,7 +16,10 @@ class Middleware{
                 return next();
             })
             .catch((error)=>{
-                res.json({'message' : 'Token not verified. Please login again'});
+                res.json({
+                    'message' : 'Token not verified. Please login again',
+                    'error': error.message
+                });
             })
         }
         else{

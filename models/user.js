@@ -1,16 +1,16 @@
 const mongoose=require('mongoose')
 
 const userSchema= new mongoose.Schema({
+    uid:{
+        type: String,
+        required: true,
+        unique: true
+    },
     name:{
         type: String,
         required: true
     },
     email:{
-        type: String,
-        required: true,
-        unique: true
-    },
-    password:{
         type: String,
         required: true,
         unique: true
@@ -25,18 +25,18 @@ const userSchema= new mongoose.Schema({
         type: Date
     },
     photo:{
-        type: URL
+        type: String
     },
     coverPhoto:{
-        type: URL
+        type: String
     },
     isAdmin:{
         type:Boolean,
         default:false
     },
-    lastActive:{
-        type: TimeRanges
-    }
+    // lastActive:{
+    //     type: TimeRanges
+    // }
 },
 {timestamps:true}
 );

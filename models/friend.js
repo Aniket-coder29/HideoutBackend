@@ -13,14 +13,6 @@ const friendSchema = new mongoose.Schema({
                 required: true,
                 unique: true
             },
-            creationDate:{
-                type: Date,
-                required: true
-            },
-            creationTime:{
-                type: TimeRanges,
-                required: true
-            },
         },
         {timestamps:true}
     ],

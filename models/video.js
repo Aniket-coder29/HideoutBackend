@@ -10,7 +10,7 @@ const videoSchema = new mongoose.Schema({
     videos:[
         {
             video:{
-                type: URL,
+                type: String,
             }, 
         }
     ],

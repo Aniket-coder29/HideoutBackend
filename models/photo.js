@@ -10,7 +10,7 @@ const photoSchema = new mongoose.Schema({
     photos:[
         {
             photo:{
-                type: URL,
+                type: String,
             }, 
         }
     ],
