@@ -6,6 +6,7 @@ const cors = require('cors');
 const middleware = require('./middleware/index')
 const userRoute = require('./routes/userRoute')
 const friendRoute = require('./routes/friendRoute')
+const postRoute = require('./routes/postRoute')
 require('./config/db')
 require('./config/firebase')
 
@@ -18,17 +19,7 @@ app.use(cors());
 app.get('/',(req,res)=>res.send('THIS IS BACKEND'))
 app.use('/api/user',middleware.decodeToken,userRoute);
 app.use('/api/friend',middleware.decodeToken,friendRoute);
-// app.get('/api/task',(req,res)=>{
-//     return res.json({
-//         tasks:[
-//             {title: 'Task 1',},
-//             {title : 'Task 2',},
-//         ],
-//     });
-// });
-// app.use('/',api)
-
-
+app.use('/api/post',middleware.decodeToken,postRoute);
 
 app.listen(port,()=>console.log('backend running at '+port))
 

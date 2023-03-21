@@ -3,25 +3,32 @@ const User = require('../models/user');
 const getUserDetails = async(req,res)=>{
     if(res.locals.user){
         try{
-            const user = res.locals.user;
-            const filter = {uid: user.uid}
+            const uid = req.query.uid
+
+            if(!uid)
+                return res.status(500).json({"error":"no uid passed"})
+            
+            const filter = {uid: uid}
             const userDetails = User.find(filter,(err,docs)=>{
                 if(err){
                     console.log(err)
-                    return res.status(200).json(err);
+                    return res.status(200).json(err)
                 }
                 else{
                     console.log(docs)
-                    return res.status(200).json(docs);
+                    return res.status(200).json(docs)
                 }
             });           
 
         }catch(error){
-            return res.status(500).json(error);
+            return res.status(500).json(error)
         }
     }
     else{
         //redirect to login
+        res.status(404).json({
+            "User" : 'Not logged in',
+        })
     }
 };
 
@@ -46,6 +53,9 @@ const getAllUsers = async(req,res)=>{
     }
     else{
         //redirect to login
+        res.status(404).json({
+            "User" : 'Not logged in',
+        })
     }
 };
 
@@ -80,6 +90,11 @@ const createUser = async(req,res)=>{
             return res.status(500).json(error);
         }
     }
+    else{
+        res.status(404).json({
+            "User" : 'Not logged in',
+        })
+    }
 };
 
 const updateUser = async(req,res)=>{
@@ -99,6 +114,11 @@ const updateUser = async(req,res)=>{
             return res.status(500).json(error);
         }
     }
+    else{
+        res.status(404).json({
+            "User" : 'Not logged in',
+        })
+    }
 };
 
 const deleteUser = async(req,res)=>{
@@ -116,6 +136,11 @@ const deleteUser = async(req,res)=>{
         catch(error){
             return res.status(500).json(error);
         }
+    }
+    else{
+        res.status(404).json({
+            "User" : 'Not logged in',
+        })
     }
 };
 
@@ -140,6 +165,9 @@ const checkUser = async(req,res)=>{
     }
     else{
         //redirect to login
+        res.status(404).json({
+            "User" : 'Not logged in',
+        })
     }
 };
 

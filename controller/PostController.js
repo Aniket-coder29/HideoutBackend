@@ -1,8 +1,7 @@
 const Post = require('../models/post');
 const Friend = require('../models/friend');
-const router = require('express').Router();
 
-router.get('/post',async(req,res,next)=>{
+const getAllPosts = async(req,res,next)=>{
     if(res.locals.user){
         try{
             const user = res.locals.user;
@@ -32,13 +31,26 @@ router.get('/post',async(req,res,next)=>{
     else{
         //redirect to login
     }
-})
+}
 
-router.get('/mypost',async(req,res,next)=>{
+const getUserPost = async(req,res,next)=>{
     if(res.locals.user){
         try{
-            const user = res.locals.user;
-            const posts = await Post.findById(user.uid);
+            const uid = req.query.uid;
+            if(!uid){
+                return res.status(500).json({"error":"no uid passed"})
+            }
+            const filter = {uid:uid}
+            const posts = await Post.find(filter,async(err,docs)=>{
+                if(err){
+                    console.log(err)
+                    res.status(200).json(err)
+                }
+                else{
+                    // console.log(docs)
+                    res.status(200).json(docs)
+                }
+            });
             res.status(200).json(posts);
 
         }catch(error){
@@ -49,9 +61,9 @@ router.get('/mypost',async(req,res,next)=>{
     else{
         //redirect to login
     }
-})
+}
 
-router.post('/post',async(req,res)=>{
+const makePost =async(req,res)=>{
     if(res.locals.user){
         const newPost = new Post(req.body);
         try{
@@ -67,4 +79,29 @@ router.post('/post',async(req,res)=>{
     else{
         //redirect to login
     }
-})
+}
+
+const deletePost = async(req,res)=>{
+    if(res.locals.user){
+        try {
+            const user = res.locals.user
+            const filter = {uid:user.uid}
+            const postId = req.query.postId
+            const delPost = Post.findOneAndUpdate(filter,{$pullAll:{posts:postId}},async(err,docs)=>{
+                if(err){
+                    console.log(err)
+                    res.status(200).json(err)
+                }
+                else{
+                    // console.log(docs)
+                    res.status(200).json(docs)
+                }
+            })
+        } catch (error) {
+            res.status(500).json(error)   
+        }
+        
+    }
+}
+
+module.exports = {makePost, getUserPost, getAllPosts, deletePost}
