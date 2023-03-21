@@ -17,18 +17,6 @@ const commentSchema = new mongoose.Schema({
             comment:{
                 type: String,
             },
-            creationTime:{
-                type:TimeRanges,
-                required: true
-            },
-            creationDate:{
-                type: Date,
-                required: true
-            },
-            lastEditedAt:{
-                type: String,
-                required: true
-            }
         }
     ],
     total:{

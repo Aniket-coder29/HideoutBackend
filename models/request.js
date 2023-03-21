@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const friendSchema = new mongoose.Schema({
+const requestSchema = new mongoose.Schema({
     uid:{
         type: String,
         required: true,
         unique: true
     },
-    friends:[
+    requests:[
         {
             type: String,
             required: true,
@@ -16,6 +16,6 @@ const friendSchema = new mongoose.Schema({
     ],
 })
 
-const friend = mongoose.model("Friend",friendSchema);
+const request = mongoose.model("Request",requestSchema);
 
-module.exports= friend;
+module.exports= request;

@@ -25,7 +25,8 @@ const userSchema= new mongoose.Schema({
         type: Date
     },
     photo:{
-        type: String
+        type: String,
+        default: ""
     },
     coverPhoto:{
         type: String

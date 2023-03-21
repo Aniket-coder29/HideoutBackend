@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema({
-    userid:{
+    uid:{
         type: String,
         required: true,
         unique: true
@@ -13,25 +13,57 @@ const postSchema = new mongoose.Schema({
                 required: true,
                 unique: true
             },
-            creationDate:{
-                type: Date,
-                required: true
+            caption:{
+                type: String,
             },
-            creationTime:{
-                type: TimeRanges,
-                required: true
-            },
-            lastEditedAt:{
-                type: TimeRanges,
-                required: true
-            }
+            images:[
+                {
+                    type: String,
+                    default: "null"
+                },
+            ],
+            videos:[
+                {
+                type: String,
+                default: "null"
+                },
+            ],
+            likes:[
+                {
+                    uid:{
+                        type: String,
+                        required: true,
+                        unique: true
+                    }, 
+                }
+            ],
+            comments:[
+                {
+                    uid:{
+                        type: String,
+                        required: true,
+                        unique: true
+                    },
+                    comment:{
+                        type: String,
+                    },
+                    replies:[
+                        {
+                            uid:{
+                                type: String,
+                                required: true,
+                                unique: true
+                            },
+                            reply:{
+                                type: String,
+                            },
+                        },
+                    ]
+                }
+            ],
         },
         {timestamps:true}
     ],
-    totalPosts:{
-        type: Number,
-        default: 0
-    }
 });
 
 const post = mongoose.model("Post",postSchema);

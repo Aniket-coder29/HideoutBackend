@@ -6,7 +6,15 @@ router.get('/post',async(req,res,next)=>{
     if(res.locals.user){
         try{
             const user = res.locals.user;
-            const allfriends = await Friend.find({userid: user.uid});
+            const allfriends = await Friend.find({userid: user.uid},(err,docs)=>{
+                if(err){
+                    console.log(err)
+                    res.status(500).json(err);
+                }
+                else{
+                    res.status(200).json(docs);
+                }
+            });
             const allIds=[];
             // allIds.push(user.uid);
             const friends= allfriends.friends;

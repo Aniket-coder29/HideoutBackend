@@ -4,7 +4,8 @@ const dotenv=require('dotenv').config();
 const port = process.env.PORT;
 const cors = require('cors');
 const middleware = require('./middleware/index')
-const userRoute = require('./controller/UserController')
+const userRoute = require('./routes/userRoute')
+const friendRoute = require('./routes/friendRoute')
 require('./config/db')
 require('./config/firebase')
 
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.get('/',(req,res)=>res.send('THIS IS BACKEND'))
 app.use('/api/user',middleware.decodeToken,userRoute);
+app.use('/api/friend',middleware.decodeToken,friendRoute);
 // app.get('/api/task',(req,res)=>{
 //     return res.json({
 //         tasks:[
