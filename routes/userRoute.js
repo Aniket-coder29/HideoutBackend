@@ -6,7 +6,7 @@ router.get('/getUserDetails',getUserDetails);
 
 router.get('/getAllUsers',getAllUsers);
 
-router.post('/create',createUser);
+router.get('/create',createUser);
 
 router.put('/update',updateUser);
 

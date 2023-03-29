@@ -1,0 +1,9 @@
+
+//notification pura module
+
+//news api
+//jobs ->ud
+//youtube
+
+
+delete user route chhod kr sare user routes tested working

@@ -11,11 +11,11 @@ const getUserDetails = async(req,res)=>{
             const filter = {uid: uid}
             const userDetails = User.find(filter,(err,docs)=>{
                 if(err){
-                    console.log(err)
+                    // console.log(err)
                     return res.status(200).json(err)
                 }
                 else{
-                    console.log(docs)
+                    // console.log(docs)
                     return res.status(200).json(docs)
                 }
             });           
@@ -38,11 +38,11 @@ const getAllUsers = async(req,res)=>{
             const user = res.locals.user;
             const userDetails = User.find({},(err,docs)=>{
                 if(err){
-                    console.log(err)
+                    // console.log(err)
                     return res.status(200).json(err);
                 }
                 else{
-                    console.log(docs)
+                    // console.log(docs)
                     return res.status(200).json(docs);
                 }
             });           
@@ -62,10 +62,10 @@ const getAllUsers = async(req,res)=>{
 const createUser = async(req,res)=>{
     if(res.locals.user){
         try{
-            console.log(req.query.name)
+            // console.log(req.query.name)
             const user = res.locals.user;
             const newUser = {
-                name: req.query.name,
+                name: req.query.name || "Yash",
                 photo: user.picture,
                 email: user.email,
                 uid: user.uid,
@@ -75,7 +75,7 @@ const createUser = async(req,res)=>{
             // console.log(newuserSave)
             const saveUser= await newuserSave.save((err,docs)=>{
                 if(err){
-                    console.log(err)
+                    // console.log(err)
                     return res.status(200).json(err)
                 }
                 else{
@@ -100,7 +100,7 @@ const createUser = async(req,res)=>{
 const updateUser = async(req,res)=>{
     if(res.locals.user){
         try{
-            console.log(req.query)
+            // console.log(req.query)
             const user = res.locals.user;
             const filter = {uid: user.uid};
             const findUser = await User.findOneAndUpdate(filter,req.query)

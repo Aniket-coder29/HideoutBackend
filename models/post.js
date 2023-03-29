@@ -8,11 +8,6 @@ const postSchema = new mongoose.Schema({
     },
     posts:[
         {
-            postId:{
-                type: String,
-                required: true,
-                unique: true
-            },
             caption:{
                 type: String,
             },
