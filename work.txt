@@ -6,4 +6,4 @@
 //youtube
 
 
-delete user route chhod kr sare user routes tested working
+sare user routes tested-> working

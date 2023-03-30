@@ -3,7 +3,8 @@ const User = require('../models/user');
 const getUserDetails = async(req,res)=>{
     if(res.locals.user){
         try{
-            const uid = req.query.uid
+            const user = res.locals.user;
+            const uid = req.query.uid? req.query.uid: user.uid
 
             if(!uid)
                 return res.status(500).json({"error":"no uid passed"})

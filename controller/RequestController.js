@@ -35,10 +35,12 @@ const makeFriendRequest = async(req,res,next)=>{
         const findUser = Request.findOne(filter, async(err,docs)=> {
             if(err){
                 // console.log(err)
+                // console.log("first error")
                 res.status(200).json(err)
             }
             else{
                 if(!docs){ 
+                    // console.log("new entry started")
                     const newReq = new Request(filter);
                     const save = await newReq.save();
                     // console.log("new entry made")
@@ -128,17 +130,17 @@ const acceptFriendRequest = async(req,res,next)=>{
                         if(!docs){ 
                             const newFriend = new Friend(filter);
                             const save = newFriend.save();
-                            // console.log("new entry made")
-                            // console.log(save)
+                            console.log("new entry made")
+                            console.log(save)
                         }
                         Friend.findOneAndUpdate(filter,{$addToSet:{friends:friendId}},async(err,docs)=>{
                             if(err){
-                                // console.log(err)
+                                console.log(err)
                                 res.status(200).json(err)
                             }
                             else{
                                 console.log(docs)
-                                // res.status(200).json(docs)
+                                res.status(200).json(docs)
                             }
                         })    
                     }  
@@ -152,12 +154,12 @@ const acceptFriendRequest = async(req,res,next)=>{
                         if(!docs){ 
                             const newFriend = new Friend({uid:friendId});
                             const save = newFriend.save();
-                            // console.log("new entry made")
-                            // console.log(save)
+                            console.log("new entry made")
+                            console.log(save)
                         }
                         Friend.findOneAndUpdate({uid:friendId},{$addToSet:{friends:user.uid}},async(err,docs)=>{
                             if(err){
-                                // console.log(err)
+                                console.log(err)
                                 res.status(200).json(err)
                             }
                             else{
