@@ -74,7 +74,7 @@ const createUser = async(req,res)=>{
             // console.log(newUser);
             const newuserSave= new User(newUser);
             // console.log(newuserSave)
-            const saveUser= await newuserSave.save((err,docs)=>{
+            const saveUser= newuserSave.save((err,docs)=>{
                 if(err){
                     // console.log(err)
                     return res.status(200).json(err)
@@ -82,7 +82,7 @@ const createUser = async(req,res)=>{
                 else{
                     return res.status(200).json({
                         status: 'User saved successfully',
-                        User : docs,
+                        email : user.email,
                     })
                 }
             });
@@ -154,6 +154,7 @@ const checkUser = async(req,res)=>{
         if(findEmail.length>0){
             return res.status(200).json({
                 User : 1,
+                email : email
                 //1 means already exists, 0 means new user
             })
         }

@@ -18,7 +18,18 @@ const userSchema= new mongoose.Schema({
         type: String
     },
     address:{
-        type: String
+        city:{
+            type:String,
+        },
+        state:{
+            type: String,
+        },
+        country:{
+            type: String,
+        },
+        pincode:{
+            type:String,
+        }
     },
     dob:{
         type: Date
@@ -28,7 +39,8 @@ const userSchema= new mongoose.Schema({
         default: ""
     },
     coverPhoto:{
-        type: String
+        type: String,
+        default: ""
     },
     isAdmin:{
         type:Boolean,
