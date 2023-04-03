@@ -1,7 +1,5 @@
 const { getAuth } = require('firebase-admin/auth')
 
-
-
 class Middleware{
     async decodeToken(req,res,next){
         // console.log(req.headers);
@@ -23,7 +21,7 @@ class Middleware{
             })
         }
         else{
-            res.json({'message' : 'Internal error occured. Please Try again.'});
+            res.json({'message' : 'Internal error occured during user verification. Please login again.'});
         }
     }
 }

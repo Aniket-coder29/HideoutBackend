@@ -66,7 +66,7 @@ const createUser = async(req,res)=>{
             // console.log(req.query.name)
             const user = res.locals.user;
             const newUser = {
-                name: req.query.name || "Yash",
+                // name: req.query.name || "Yash",
                 photo: user.picture,
                 email: user.email,
                 uid: user.uid,
