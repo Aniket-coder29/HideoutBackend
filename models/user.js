@@ -46,9 +46,30 @@ const userSchema= new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    // lastActive:{
-    //     type: TimeRanges
-    // }
+    social_links:{
+        linkedIn:{
+            type: String,
+        },
+        instagram:{
+            type: String,
+        },
+        github:{
+            type: String,
+        },
+        otherLinks:[
+            {
+                link:{
+                    type:String
+                },
+            }
+        ]
+    },
+    about:{
+        type:String,
+    },
+    designation:{
+        type:String,
+    }
 },
 {timestamps:true}
 );

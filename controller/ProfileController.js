@@ -1,3 +1,0 @@
-//getSelfProfile-> user details, 
-//getUserProfile->
-

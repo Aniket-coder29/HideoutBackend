@@ -38,13 +38,17 @@ const getAllUsers = async(req,res)=>{
         try{
             const user = res.locals.user;
             const userDetails = User.find({},(err,docs)=>{
+                let retVal
                 if(err){
                     // console.log(err)
                     return res.status(200).json(err);
                 }
                 else{
                     // console.log(docs)
-                    return res.status(200).json(docs);
+                    (docs).forEach(element => {
+                        retVal.push({ uid: element.uid, name: element.name, photo: element.photo, designation: element.designation })
+                    });
+                    return res.status(200).json(retVal);
                 }
             });           
 
@@ -101,10 +105,10 @@ const createUser = async(req,res)=>{
 const updateUser = async(req,res)=>{
     if(res.locals.user){
         try{
-            // console.log(req.query)
+            console.log(req.body)
             const user = res.locals.user;
             const filter = {uid: user.uid};
-            const findUser = await User.findOneAndUpdate(filter,req.query)
+            const findUser = await User.findOneAndUpdate(filter,req.body)
             return res.status(200).json({
                 status: 'User updated successfully',
                 User : findUser,

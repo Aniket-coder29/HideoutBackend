@@ -29,7 +29,7 @@ const makeFriendRequest = async(req,res,next)=>{
         const user = res.locals.user;
         const friendId = req.query.uid;
         if(!friendId){
-            res.status(500).json({"error" : "no friend  id found"});
+            res.status(500).json({"error" : "no friend id found"});
         }
         const addReq = await addRequest(user.uid,friendId)
         res.status(200).json({"Status" : "Success"})
