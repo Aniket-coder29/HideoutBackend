@@ -154,17 +154,25 @@ const checkUser = async(req,res)=>{
         const user = res.locals.user;
         const email = user.email;
         const findEmail = await User.find({email: email});
-
+        console.log(findEmail)
         if(findEmail.length>0){
+            const userDetail=findEmail[0];
+            if(userDetail.name && userDetail.name!==""){
+                return res.status(200).json({
+                    User : 1,
+                    email : email,
+                    //1 means already exists, 0 means new user
+                })
+            }
             return res.status(200).json({
-                User : 1,
-                email : email
+                User : 0,
+                email: email
                 //1 means already exists, 0 means new user
             })
         }
         else{
             return res.status(200).json({
-                User : 0,
+                User : -1,
                 //1 means already exists, 0 means new user
             })
         }
