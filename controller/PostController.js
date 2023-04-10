@@ -36,7 +36,7 @@ const getAllPosts = async(req,res,next)=>{
 const getUserPost = async(req,res,next)=>{
     if(res.locals.user){
         try{
-            const uid = req.query.uid;
+            const uid = req.query.uid?req.query.uid:user.uid;
             if(!uid){
                 return res.status(500).json({"error":"no uid passed"})
             }
@@ -51,7 +51,7 @@ const getUserPost = async(req,res,next)=>{
                     res.status(200).json(docs)
                 }
             });
-            res.status(200).json(posts);
+            // res.status(200).json(posts);
 
         }catch(error){
             res.status(500).json(error);

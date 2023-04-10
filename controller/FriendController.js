@@ -3,7 +3,8 @@ const friend = require("../models/friend");
 
 const getAllFriends = async(req,res,next)=>{
     if(res.locals.user){
-        const uid=req.query.uid;
+        const user = res.locals.user;
+        const uid = req.query.uid? req.query.uid: user.uid
         if(!uid)
             return res.status(500).json({"error" : "no uid passed"});
         const filter = {uid:uid}
