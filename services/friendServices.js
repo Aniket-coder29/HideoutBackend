@@ -1,5 +1,6 @@
 const Friend = require('../models/friend');
-const Request = require('../models/request')
+const Request = require('../models/request');
+const { getDetails } = require('./userServices');
 
 const checkSentRequest = async (id, friendId) => {
     const filter = { uid: friendId };
@@ -93,11 +94,12 @@ const addFriend = async (id, friendId) => {
             console.log(docs)
             if (!docs) {
                 const newFriend = new Friend(filter);
-                const save = newFriend.save();
+                const save = await newFriend.save();
                 console.log("new entry made")
                 console.log(save)
             }
-            await Friend.findOneAndUpdate(filter, { $addToSet: { friends: friendId } }, async (err, docs) => {
+            const friendDetails = await getDetails(friendId);
+            await Friend.findOneAndUpdate(filter, { $addToSet: { friends: friendDetails } }, async (err, docs) => {
                 if (err) {
                     console.log(err)
                     return false

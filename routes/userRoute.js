@@ -1,8 +1,10 @@
 //user routes will be here
 const router = require('express').Router();
-const { getUserDetails, getAllUsers, createUser, updateUser, deleteUser, checkUser } = require('../controller/UserController')
+const { getUserDetails, getAllUsers, createUser, updateUser, deleteUser, checkUser, getMiniDetails } = require('../controller/UserController')
 
 router.get('/getUserDetails',getUserDetails);
+
+router.get('/getMiniDetails', getMiniDetails)
 
 router.get('/getAllUsers',getAllUsers);
 
