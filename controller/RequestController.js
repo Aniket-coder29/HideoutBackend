@@ -84,7 +84,6 @@ const acceptFriendRequest = async(req,res,next)=>{
     if(res.locals.user){
         const user = res.locals.user;
         const friendId = req.query.uid;
-        const filter = {uid:user.uid};
         if(!friendId){
             return;
         }
@@ -92,10 +91,12 @@ const acceptFriendRequest = async(req,res,next)=>{
         if(!add1){
             res.status(200).json(err)
         }
+        console.log(add1)
         const add2 = await addFriend(friendId,user.uid)
         if(!add2){
             res.status(200).json(err)
         }
+        console.log(add2)
         const del= await deleteRequest(user.uid,friendId)
         if(!del){
             res.status(200).json(err)

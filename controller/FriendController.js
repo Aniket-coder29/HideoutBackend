@@ -10,11 +10,11 @@ const getAllFriends = async(req,res,next)=>{
         const filter = {uid:uid}
         const getFriends = friend.find(filter,async(err,docs)=> {
             if(err){
-                console.log(err)
+                // console.log(err)
                 res.status(200).json(err)
             }
             else{
-                console.log(docs)
+                // console.log(docs)
                 res.status(200).json(docs)
             }
         })
@@ -46,7 +46,7 @@ const removeFriend = async(req,res,next)=>{
                 }
                 friend.findOneAndUpdate(filter1,{$pullAll:{friends:[user.uid]}},async(err,docs)=>{
                     if(err){
-                        console.log(err)
+                        // console.log(err)
                         res.status(200).json(err)
                     }
                     else{
@@ -67,7 +67,7 @@ const removeFriend = async(req,res,next)=>{
                 }
                 friend.findOneAndUpdate(filter2,{$pullAll:{friends:[friendId]}},async(err,docs)=>{
                     if(err){
-                        console.log(err)
+                        // console.log(err)
                         res.status(200).json(err)
                     }
                     else{
