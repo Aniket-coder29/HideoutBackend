@@ -38,7 +38,7 @@ const getAllUsers = async(req,res)=>{
         try{
             const user = res.locals.user;
             const userDetails = User.find({},(err,docs)=>{
-                let retVal
+                let retVal=[]
                 if(err){
                     // console.log(err)
                     return res.status(200).json(err);
