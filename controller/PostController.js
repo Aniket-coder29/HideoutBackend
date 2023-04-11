@@ -15,11 +15,8 @@ const getAllPosts = async (req, res, next) => {
                 }
             });
             const allIds = [];
-            // allIds.push(user.uid);
             const friends = allfriends.friends;
-            // foreach(allfriends.friends as yaar){
-            //     allIds.push(yaar.uid);
-            // }
+            //add all ids to array
             const posts = await Post.find({ userid: user.uid });
             res.status(200).json(posts);
 
@@ -43,7 +40,7 @@ const getUserPost = async (req, res, next) => {
             const filter = { uid: uid }
             const posts = await Post.find(filter, async (err, docs) => {
                 if (err) {
-                    console.log(err)
+                    // console.log(err)
                     res.status(200).json(err)
                 }
                 else {
