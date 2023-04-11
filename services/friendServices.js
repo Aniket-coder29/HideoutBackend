@@ -85,7 +85,13 @@ const deleteRequest = async (id, friendId) => {
 
 const addFriend = async (id, friendId) => {
     const filter = { uid: id }
-    await Friend.findOne(filter, async (err, docs) => {
+    console.log(id,"adding",friendId);
+    const friendDetails = await getDetails(friendId)
+    let retval={}
+    if (friendDetails.status) {
+            retval= { uid: friendDetails.data.uid, photo: friendDetails.data.photo, name: friendDetails.data.name, designation: friendDetails.data.designation || "" }
+    }
+    await Friend.findOne(filter, (err, docs) => {
         if (err) {
             // console.log(err)
             return false
@@ -94,17 +100,11 @@ const addFriend = async (id, friendId) => {
             // console.log(docs)
             if (!docs) {
                 const newFriend = new Friend(filter);
-                const save = await newFriend.save();
+                const save = newFriend.save();
                 // console.log("new entry made")
                 // console.log(save)
             }
-            const friendDetails = await getDetails(friendId)
-            let retval={}
-            if (friendDetails.status) {
-                 retval= { uid: friendDetails.data.uid, photo: friendDetails.data.photo, name: friendDetails.data.name, designation: friendDetails.data.designation || "" }
-            }
-            // console.log(retval)
-            await Friend.findOneAndUpdate(filter, { $addToSet: { friends: retval } }, async (err, docs) => {
+            Friend.findOneAndUpdate(filter, { $addToSet: { friends: retval } }, async (err, docs) => {
                 if (err) {
                     // console.log(err)
                     return false
@@ -116,6 +116,8 @@ const addFriend = async (id, friendId) => {
             }).clone()
         }
     }).clone()
+    
+    // console.log(retval)
     return true
 }
 

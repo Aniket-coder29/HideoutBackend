@@ -14,22 +14,16 @@ const postSchema = new mongoose.Schema({
             images:[
                 {
                     type: String,
-                    default: "null"
                 },
             ],
             videos:[
                 {
                 type: String,
-                default: "null"
                 },
             ],
             likes:[
                 {
-                    uid:{
-                        type: String,
-                        required: true,
-                        unique: true
-                    }, 
+                    type: String,
                 }
             ],
             comments:[
@@ -37,7 +31,6 @@ const postSchema = new mongoose.Schema({
                     uid:{
                         type: String,
                         required: true,
-                        unique: true
                     },
                     comment:{
                         type: String,
@@ -47,7 +40,6 @@ const postSchema = new mongoose.Schema({
                             uid:{
                                 type: String,
                                 required: true,
-                                unique: true
                             },
                             reply:{
                                 type: String,
