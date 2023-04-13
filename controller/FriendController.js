@@ -1,5 +1,8 @@
 const friend = require("../models/friend");
+const User = require('../models/user');
+const Request = require('../models/request')
 const { countFriends, getFriends } = require("../services/friendServices");
+const { getMinDetails } = require("../services/userServices");
 
 
 const getAllFriends = async (req, res, next) => {
@@ -125,4 +128,50 @@ const getCountOfFriends = async (req, res, next) => {
     }
 }
 
-module.exports = { getAllFriends, removeFriend, getCountOfFriends }
+const possibleConnections = async(req,res)=>{
+    if(res.locals.user){
+        const user = res.locals.user
+        try{
+            const allUsers = await User.find({},"uid").clone().exec();
+            console.log(allUsers)
+            const friends = await friend.findOne({uid:user.uid},"friends").clone().exec();
+            console.log(friends)
+            const reqUsers = await Request.findOne({uid:user.uid},"sentRequests").clone().exec();
+            console.log(reqUsers)
+            let ids = new Set()
+            ids.add(user.uid)
+            let ans = []
+            for(let i of reqUsers.sentRequests){
+                ids.add(i)
+            }
+            for(let i of friends.friends){
+                ids.add(i.uid)
+            }
+            for(let i of allUsers){
+                let iniSize = ids.size
+                ids.add(i.uid)
+                let newSize = ids.size
+                if(newSize>iniSize){
+                    ans.push(i.uid)
+                }
+            }
+            let ans1 = []
+            for(let i of ans){
+                const details = await getMinDetails(i)
+                ans1.push(details.data)
+            }
+            res.status(200).json(ans1)
+        }catch(error){
+            res.status(500).json({error:error})
+        }
+    }else{
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+    
+}
+
+module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections }

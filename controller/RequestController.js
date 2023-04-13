@@ -103,7 +103,6 @@ const rejectFriendRequest = async(req,res,next)=>{
         const user = res.locals.user;
         const friendId = req.query.uid;
         const del= await deleteRequest(friendId,user.uid)
-        // const del= await deleteRequest(user.uid,friendId)
         if(!del){
             res.status(200).json(err)
         }
