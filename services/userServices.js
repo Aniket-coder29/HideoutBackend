@@ -3,18 +3,18 @@ const User = require('../models/user')
 const getDetails = async (uid) => {
     const filter = { uid: uid }
     console.log("get Details in user Services")
-    try{
+    try {
         const userDetails = await User.findOne(filter).clone().exec();
         console.log(userDetails)
         return {
-            status:1,
-            data:userDetails
+            status: 1,
+            data: userDetails
         }
     }
-    catch(err){
+    catch (err) {
         return {
-            status:0,
-            error:err
+            status: 0,
+            error: err
         }
     }
     // const userDetails = await User.findOne(filter, (err, docs) => {
@@ -28,25 +28,25 @@ const getDetails = async (uid) => {
     //     }
     // }).clone();
     // console.log(retVal)
-    
+
 }
 
 const getMinDetails = async (uid) => {
     const filter = { uid: uid }
     const filter2 = "name photo designation uid"
     console.log("get Min Details in user Services")
-    try{
-        const userDetails = await User.findOne(filter,filter2).clone().exec();
+    try {
+        const userDetails = await User.findOne(filter, filter2).clone().exec();
         console.log(userDetails)
         return {
-            status:1,
-            data:userDetails
+            status: 1,
+            data: userDetails
         }
     }
-    catch(err){
+    catch (err) {
         return {
-            status:0,
-            error:err
+            status: 0,
+            error: err
         }
     }
 }
