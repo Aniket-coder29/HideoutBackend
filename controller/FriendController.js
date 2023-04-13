@@ -90,7 +90,8 @@ const removeFriend = async (req, res, next) => {
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 }
@@ -118,7 +119,8 @@ const getCountOfFriends = async (req, res, next) => {
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 }

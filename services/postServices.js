@@ -19,7 +19,7 @@ const getPost = async (id) => {
     }
 }
 
-const compilePosts = async(ele)=>{
+const compilePosts2 = async(ele)=>{
     let posts = []
     const post = await getPost(ele.uid)
     if(post.status && post.data){
@@ -31,35 +31,57 @@ const compilePosts = async(ele)=>{
     return posts;
 }
 
+const compilePosts1 = async(allIds)=>{
+    let posts = []
+    try {
+        for(let i of allIds){
+            // console.log(allIds[i])
+            // console.log(i)
+            const post = await compilePosts2(i)
+            // console.log(post)
+            post.forEach((pos)=>{
+                posts.push(pos)
+            })
+        }
+        // console.log("try part")
+        // console.log(posts)
+    } catch (error) {
+        // console.log(error)
+        return []
+    }
+    finally{
+        // console.log("here")
+        return posts
+    }
+}
+
 const getAllPost = async(id)=>{
     try {
         const allfriends = await getFriends(id)
-        console.log(allfriends)
-        let posts = []
+        // console.log(allfriends)
+        // let posts = []
         if(allfriends.status){
             const allIds = new Set();
             const friends = allfriends.data.friends;
-            console.log("friends array",friends)
+            // console.log("friends array",friends)
             friends.forEach(element => {
                 allIds.add(element)
             });
             const details = await getMinDetails(id)
             allIds.add(details.data)
-            allIds.forEach(async(ele)=>{
-                const post = await compilePosts(ele)
-                console.log("post", post)
-                posts.concat(post)
-                console.log(posts)
-            })
+            const posts = await compilePosts1(allIds)
+            // console.log(posts)
             return {
                 status:1,
                 data:posts
             }
         }
-        // return {
-        //     status:1,
-        //     data:posts
-        // }
+        else{
+            return {
+                status:0,
+                error:allfriends.error
+            }
+        }
     } catch (error) {
         return {
             status:0,

@@ -51,7 +51,7 @@ const getAllPosts = async (req, res, next) => {
             //add all ids to array
             // const posts = await Post.find({ userid: user.uid });
             const posts = await getAllPost(user.uid)
-            console.log(posts)
+            console.log("get posts in post controller",posts)
             if(posts.status){
                 res.status(200).json(posts.data);
             }
