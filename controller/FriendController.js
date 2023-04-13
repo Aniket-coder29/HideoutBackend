@@ -11,17 +11,6 @@ const getAllFriends = async (req, res, next) => {
         const uid = req.query.uid ? req.query.uid : user.uid
         if (!uid)
             return res.status(500).json({ "error": "no uid passed" });
-        // const filter = { uid: uid }
-        // const getFriends = friend.find(filter, async (err, docs) => {
-        //     if (err) {
-        //         // console.log(err)
-        //         res.status(200).json(err)
-        //     }
-        //     else {
-        //         // console.log(docs)
-        //         res.status(200).json(docs)
-        //     }
-        // })
         const getFriend = await getFriends(uid)
         if (getFriend.status) {
             res.status(200).json(getFriend.data.friends)
@@ -106,12 +95,9 @@ const getCountOfFriends = async (req, res, next) => {
         if (!uid)
             return res.status(500).json({ "error": "no uid passed" });
         const count = await countFriends(uid)
-        console.log(count)
+        // console.log(count)
         if (count.status) {
-            res.status(200).json({
-                // count: count.docs.friends.size()
-                count: count.count
-            })
+            res.status(200).json(count.data)
         }
         else {
             res.status(500).json({

@@ -161,24 +161,19 @@ const checkFriend = async (id, friendId) => {
 
 const countFriends = async (id) => {
     const filter = { uid: id }
-    let retval = {}
-    await Friend.findOne(filter, (err, docs) => {
-        if (err) {
-            console.log(err)
-            retval = {
-                status: 0,
-                error: err
-            }
+    try {
+        const friends = await Friend.findOne(filter,"friends").clone().exec();
+        // console.log(friends.friends.length)
+        return {
+            status:1,
+            data: friends.friends.length
         }
-        else {
-            console.log(docs)
-            retval = {
-                status: 1,
-                count: docs
-            }
+    } catch (error) {
+        return {
+            status:0,
+            error:error
         }
-    }).clone()
-    return retval
+    }
 }
 
 const getFriends = async (id) => {
