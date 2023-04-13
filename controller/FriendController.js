@@ -1,5 +1,5 @@
 const friend = require("../models/friend");
-const { countFriends } = require("../services/friendServices");
+const { countFriends, getFriends } = require("../services/friendServices");
 
 
 const getAllFriends = async (req, res, next) => {
@@ -8,22 +8,30 @@ const getAllFriends = async (req, res, next) => {
         const uid = req.query.uid ? req.query.uid : user.uid
         if (!uid)
             return res.status(500).json({ "error": "no uid passed" });
-        const filter = { uid: uid }
-        const getFriends = friend.find(filter, async (err, docs) => {
-            if (err) {
-                // console.log(err)
-                res.status(200).json(err)
-            }
-            else {
-                // console.log(docs)
-                res.status(200).json(docs)
-            }
-        })
+        // const filter = { uid: uid }
+        // const getFriends = friend.find(filter, async (err, docs) => {
+        //     if (err) {
+        //         // console.log(err)
+        //         res.status(200).json(err)
+        //     }
+        //     else {
+        //         // console.log(docs)
+        //         res.status(200).json(docs)
+        //     }
+        // })
+        const getFriend = await getFriends(uid)
+        if(getFriend.status){
+            res.status(200).json(getFriend)
+        }
+        else{
+            res.status(500).json(getFriend)
+        }
     }
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 }

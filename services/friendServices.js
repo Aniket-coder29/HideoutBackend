@@ -225,4 +225,21 @@ const countFriends = async (id) => {
     }).clone()
     return retval
 }
-module.exports = { addRequest, deleteRequest, addFriend, deleteFriend, checkFriend, checkSentRequest, checkRecievedRequest, countFriends }
+
+const getFriends = async(id)=>{
+    const filter = {uid:id}
+    try {
+        const getFriend = await Friend.findOne(filter).clone().exec()
+        console.log(getFriend)
+        return {
+            status:1,
+            data: getFriend
+        }
+    } catch (error) {
+        return {
+            status: 0,
+            error: error
+        }
+    }
+}
+module.exports = { addRequest, deleteRequest, addFriend, deleteFriend, checkFriend, checkSentRequest, checkRecievedRequest, countFriends, getFriends }

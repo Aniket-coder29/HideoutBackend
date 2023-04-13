@@ -14,14 +14,14 @@ class Middleware{
                 return next();
             })
             .catch((error)=>{
-                res.status(400).json({
+                res.status(404).json({
                     'message' : 'Token not verified. Please login again',
                     'error': error.message
                 });
             })
         }
         else{
-            res.status(500).json({'message' : 'Internal error occured during user verification. Please login again.'});
+            res.status(404).json({'message' : 'Internal error occured during user verification. Please login again.'});
         }
     }
 }
