@@ -214,4 +214,19 @@ const checkUser = async (req, res) => {
     }
 };
 
+const possibleConnections = async(req,res)=>{
+    if(res.locals.user){
+        try{
+            const allUsers = await User.find({},"uid").clone().exec();
+            console.log(allUsers)
+
+        }catch(error){
+
+        }
+    }else{
+        //redirect to login
+
+    }
+    
+}
 module.exports = { checkUser, getAllUsers, getUserDetails, createUser, deleteUser, updateUser, getMiniDetails };

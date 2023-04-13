@@ -13,6 +13,13 @@ const requestSchema = new mongoose.Schema({
         },
         {timestamps:true}
     ],
+    sentRequests:[
+        {
+            type:String,
+            required: true,
+        },
+        {timestamps:true}
+    ]
 })
 
 const request = mongoose.model("Request",requestSchema);

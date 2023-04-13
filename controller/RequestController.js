@@ -54,28 +54,8 @@ const deleteFriendRequest = async(req,res,next)=>{
         if(!friendId){
             return;
         }
-        const filter = {uid:friendId};
-        const findUser = Request.findOne(filter, async(err,docs)=> {
-            if(err){
-                // console.log(err)
-                res.status(200).json(err)
-            }
-            else{
-                if(!docs){ 
-                    return;
-                }
-                Request.findOneAndUpdate(filter,{$pullAll:{requests:[user.uid]}},async(err,docs)=>{
-                    if(err){
-                        console.log(err)
-                        res.status(200).json(err)
-                    }
-                    else{
-                        // console.log(docs)
-                        res.status(200).json(docs)
-                    }
-                })
-            }
-        })
+        const delReq = await deleteRequest(user.uid,friendId)
+        res.status(200).json({Status: "Successfully Deleted"})
     }
     else{
         //redirect to login
