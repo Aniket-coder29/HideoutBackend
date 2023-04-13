@@ -23,10 +23,10 @@ const getAllFriends = async (req, res, next) => {
         //     }
         // })
         const getFriend = await getFriends(uid)
-        if(getFriend.status){
+        if (getFriend.status) {
             res.status(200).json(getFriend.data.friends)
         }
-        else{
+        else {
             res.status(500).json(getFriend.error)
         }
     }
@@ -100,20 +100,20 @@ const removeFriend = async (req, res, next) => {
 }
 
 const getCountOfFriends = async (req, res, next) => {
-    if(res.locals.user){
+    if (res.locals.user) {
         const user = res.locals.user;
         const uid = req.query.uid ? req.query.uid : user.uid
         if (!uid)
             return res.status(500).json({ "error": "no uid passed" });
         const count = await countFriends(uid)
         console.log(count)
-        if(count.status){
+        if (count.status) {
             res.status(200).json({
                 // count: count.docs.friends.size()
                 count: count.count
             })
         }
-        else{
+        else {
             res.status(500).json({
                 error: "Not able to connect to source"
             })
@@ -128,50 +128,50 @@ const getCountOfFriends = async (req, res, next) => {
     }
 }
 
-const possibleConnections = async(req,res)=>{
-    if(res.locals.user){
+const possibleConnections = async (req, res) => {
+    if (res.locals.user) {
         const user = res.locals.user
-        try{
-            const allUsers = await User.find({},"uid").clone().exec();
+        try {
+            const allUsers = await User.find({}, "uid").clone().exec();
             console.log(allUsers)
-            const friends = await friend.findOne({uid:user.uid},"friends").clone().exec();
+            const friends = await friend.findOne({ uid: user.uid }, "friends").clone().exec();
             console.log(friends)
-            const reqUsers = await Request.findOne({uid:user.uid},"sentRequests").clone().exec();
+            const reqUsers = await Request.findOne({ uid: user.uid }, "sentRequests").clone().exec();
             console.log(reqUsers)
             let ids = new Set()
             ids.add(user.uid)
             let ans = []
-            for(let i of reqUsers.sentRequests){
+            for (let i of reqUsers.sentRequests) {
                 ids.add(i)
             }
-            for(let i of friends.friends){
+            for (let i of friends.friends) {
                 ids.add(i.uid)
             }
-            for(let i of allUsers){
+            for (let i of allUsers) {
                 let iniSize = ids.size
                 ids.add(i.uid)
                 let newSize = ids.size
-                if(newSize>iniSize){
+                if (newSize > iniSize) {
                     ans.push(i.uid)
                 }
             }
             let ans1 = []
-            for(let i of ans){
+            for (let i of ans) {
                 const details = await getMinDetails(i)
                 ans1.push(details.data)
             }
             res.status(200).json(ans1)
-        }catch(error){
-            res.status(500).json({error:error})
+        } catch (error) {
+            res.status(500).json({ error: error })
         }
-    }else{
+    } else {
         //redirect to login
         res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
     }
-    
+
 }
 
 module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections }
