@@ -6,20 +6,25 @@ const getAllRequests = async(req,res,next)=>{
     if(res.locals.user){
         const user = res.locals.user;
         const filter = {uid:user.uid};
-        const findUser = Request.find(filter, async(err,docs)=> {
-            if(err){
-                // console.log(err)
-                res.status(200).json(err)
+        try {
+            const findUser = await Request.findOne(filter).clone().exec()
+            if(findUser){
+                console.log(findUser)
+                res.status(200).json(findUser.requests)
             }
             else{
-                res.status(200).json(docs)
+                console.log("no request ever")
+                res.status(200).json([])
             }
-        })
+        } catch (error) {
+            res.status(500).json(error)
+        }
     }
     else{
         //redirect to login
         res.status(404).json({
-            "User" : 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 }
@@ -75,7 +80,8 @@ const deleteFriendRequest = async(req,res,next)=>{
     else{
         //redirect to login
         res.status(404).json({
-            "User" : 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 };
@@ -106,7 +112,8 @@ const acceptFriendRequest = async(req,res,next)=>{
     else{
         //redirect to login
         res.status(404).json({
-            "User" : 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 };
@@ -124,7 +131,8 @@ const rejectFriendRequest = async(req,res,next)=>{
     else{
         //redirect to login
         res.status(404).json({
-            "User" : 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 };

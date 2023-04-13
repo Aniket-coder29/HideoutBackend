@@ -1,40 +1,63 @@
 const Post = require('../models/post');
 const Friend = require('../models/friend');
 const { getFriends } = require('../services/friendServices');
-const { getPost } = require('../services/postServices');
+const { getPost, getAllPost } = require('../services/postServices');
 const { getMinDetails } = require('../services/userServices');
 
 const getAllPosts = async (req, res, next) => {
     if (res.locals.user) {
         try {
             const user = res.locals.user;
-            const allfriends = await getFriends(user.uid)
-            console.log(allfriends)
-            let posts = []
-            if(allfriends.status){
-                const allIds = [];
-                const friends = allfriends.data.friends;
-                console.log("friends array",friends)
-                friends.forEach(element => {
-                    allIds.push(element.uid)
-                });
-                allIds.push(user.uid)
-                console.log(allIds)
-                allIds.forEach(async(id)=>{
-                    const post = await getPost(id)
-                    const details = await getMinDetails(id)
-                    if(post.status){
-                        console.log(post.data)
-                        if(post.data)
-                            posts.push(post.data)
-                    }
-                })
-            }
-            console.log(posts)
+            // const allfriends = await getFriends(user.uid)
+            // console.log(allfriends)
+            // let posts = []
+            // if(allfriends.status){
+            //     const allIds = new Set();
+            //     const friends = allfriends.data.friends;
+            //     console.log("friends array",friends)
+            //     friends.forEach(element => {
+            //         allIds.add(element)
+            //     });
+            //     const details = await getMinDetails(user.uid)
+            //     allIds.add(details.data)
+            //     // console.log("allIds",allIds)
+            //     // console.log(allIds)
+            //     allIds.forEach(async(ele)=>{
+            //         // console.log("ele",ele)
+            //         const post = await getPost(ele.uid)
+            //         // console.log("post",post)
+                    
+                    
+            //         // const details = await getMinDetails(id)
+            //         if(post.status){
+            //             // console.log("postdata",post.data)
+            //             if(post.data){
+            //                 post.data.posts.forEach((pos)=>{
+            //                     // console.log("pos",pos)
+            //                     const rt = {...pos.toJSON(),...ele.toJSON()}
+            //                     // console.log("rt",rt)
+            //                     posts.push(rt)
+            //                 })
+            //                 // const ret = {...post.data,...ele}
+            //                 // console.log("ret",ret)
+            //                 // posts.push(post.data)
+            //             }
+            //         }
+            //     })
+            //     // console.log("posts",posts)
+            // }
+            // console.log("posts",posts)
             // const friends = allfriends.friends;
             //add all ids to array
             // const posts = await Post.find({ userid: user.uid });
-            res.status(200).json(posts);
+            const posts = await getAllPost(user.uid)
+            console.log(posts)
+            if(posts.status){
+                res.status(200).json(posts.data);
+            }
+            else{
+                res.status(500).json(posts.error)
+            }
 
         } catch (error) {
             res.status(500).json(error);
@@ -43,6 +66,10 @@ const getAllPosts = async (req, res, next) => {
     }
     else {
         //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
     }
 }
 
@@ -78,6 +105,10 @@ const getUserPost = async (req, res, next) => {
     }
     else {
         //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
     }
 }
 
@@ -132,7 +163,8 @@ const makePost = async (req, res) => {
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 }

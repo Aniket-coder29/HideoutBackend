@@ -24,7 +24,8 @@ const getUserDetails = async (req, res) => {
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 };
@@ -53,7 +54,8 @@ const getMiniDetails = async (req, res) => {
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 }
@@ -84,7 +86,8 @@ const getAllUsers = async (req, res) => {
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 };
@@ -205,7 +208,8 @@ const checkUser = async (req, res) => {
     else {
         //redirect to login
         res.status(404).json({
-            "User": 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
         })
     }
 };
