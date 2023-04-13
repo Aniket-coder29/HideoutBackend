@@ -85,21 +85,21 @@ const acceptFriendRequest = async(req,res,next)=>{
         const user = res.locals.user;
         const friendId = req.query.uid;
         if(!friendId){
-            return;
+            return res.status(500).json({ "error": "no uid passed" });
         }
         const add1 = await addFriend(user.uid,friendId)
-        if(!add1){
-            res.status(200).json(err)
+        if(add1.status===0){
+            res.status(500).json(add1.error)
         }
         console.log(add1)
         const add2 = await addFriend(friendId,user.uid)
-        if(!add2){
-            res.status(200).json(err)
+        if(add2.status===0){
+            res.status(500).json(add2.error)
         }
         console.log(add2)
         const del= await deleteRequest(user.uid,friendId)
         if(!del){
-            res.status(200).json(err)
+            res.status(500).json(err)
         }
         res.status(200).json({"Status":"Success"})
     }

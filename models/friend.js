@@ -4,7 +4,6 @@ const friendSchema = new mongoose.Schema({
     uid: {
         type: String,
         required: true,
-        unique: true
     },
     friends: [
         {

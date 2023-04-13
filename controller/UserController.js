@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { getDetails } = require('../services/userServices');
+const { getDetails, getMinDetails } = require('../services/userServices');
 
 const getUserDetails = async (req, res) => {
     if (res.locals.user) {
@@ -38,10 +38,10 @@ const getMiniDetails = async (req, res) => {
             if (!uid)
                 return res.status(500).json({ "error": "no uid passed" })
 
-            const userDetails = await getDetails(uid)
+            const userDetails = await getMinDetails(uid)
             if (userDetails.status) {
-                let retval = { uid: userDetails.data.uid, photo: userDetails.data.photo, name: userDetails.data.name, designation: userDetails.data.designation || "" }
-                return res.status(200).json(retval)
+                // let retval = { uid: userDetails.data.uid, photo: userDetails.data.photo, name: userDetails.data.name, designation: userDetails.data.designation || "" }
+                return res.status(200).json(userDetails.data)
             }
             else {
                 throw new Exception("Not able to find Details!");
