@@ -1,23 +1,39 @@
 const Post = require('../models/post');
 const Friend = require('../models/friend');
+const { getFriends } = require('../services/friendServices');
+const { getPost } = require('../services/postServices');
+const { getMinDetails } = require('../services/userServices');
 
 const getAllPosts = async (req, res, next) => {
     if (res.locals.user) {
         try {
             const user = res.locals.user;
-            const allfriends = await Friend.find({ userid: user.uid }, (err, docs) => {
-                if (err) {
-                    console.log(err)
-                    res.status(500).json(err);
-                }
-                else {
-                    res.status(200).json(docs);
-                }
-            });
-            const allIds = [];
-            const friends = allfriends.friends;
+            const allfriends = await getFriends(user.uid)
+            console.log(allfriends)
+            let posts = []
+            if(allfriends.status){
+                const allIds = [];
+                const friends = allfriends.data.friends;
+                console.log("friends array",friends)
+                friends.forEach(element => {
+                    allIds.push(element.uid)
+                });
+                allIds.push(user.uid)
+                console.log(allIds)
+                allIds.forEach(async(id)=>{
+                    const post = await getPost(id)
+                    const details = await getMinDetails(id)
+                    if(post.status){
+                        console.log(post.data)
+                        if(post.data)
+                            posts.push(post.data)
+                    }
+                })
+            }
+            console.log(posts)
+            // const friends = allfriends.friends;
             //add all ids to array
-            const posts = await Post.find({ userid: user.uid });
+            // const posts = await Post.find({ userid: user.uid });
             res.status(200).json(posts);
 
         } catch (error) {

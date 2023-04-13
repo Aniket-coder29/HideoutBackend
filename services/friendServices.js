@@ -228,6 +228,7 @@ const countFriends = async (id) => {
 
 const getFriends = async(id)=>{
     const filter = {uid:id}
+    console.log("get Friends in friend services")
     try {
         const getFriend = await Friend.findOne(filter).clone().exec()
         console.log(getFriend)

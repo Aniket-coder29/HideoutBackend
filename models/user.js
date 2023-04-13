@@ -37,7 +37,7 @@ const userSchema= new mongoose.Schema({
     },
     photo:{
         type: String,
-        default: ""
+        default: "https://cdn-icons-png.flaticon.com/512/1053/1053244.png"
     },
     coverPhoto:{
         type: String,

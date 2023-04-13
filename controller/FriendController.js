@@ -21,10 +21,10 @@ const getAllFriends = async (req, res, next) => {
         // })
         const getFriend = await getFriends(uid)
         if(getFriend.status){
-            res.status(200).json(getFriend)
+            res.status(200).json(getFriend.data.friends)
         }
         else{
-            res.status(500).json(getFriend)
+            res.status(500).json(getFriend.error)
         }
     }
     else {
