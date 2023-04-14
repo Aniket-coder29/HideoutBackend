@@ -10,14 +10,14 @@ const checkFriend = async (req, res, next) => {
         const friendId = req.query.id
         const check = await checkFriends(user.uid, friendId)
         if (check.status) {
-            res.status(200).json(check.data)
+            return res.status(200).json(check.data)
         }
         else {
-            res.status(500).json(check.error)
+            return res.status(500).json(check.error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -40,19 +40,19 @@ const getAllFriends = async (req, res, next) => {
                         friends.push(detail.data)
                     }
                 }
-                res.status(200).json(friends)
+                return res.status(200).json(friends)
             }
             else {
-                res.status(200).json([]);
+                return res.status(200).json([]);
             }
         }
         else {
-            res.status(500).json(getFriend.error)
+            return res.status(500).json(getFriend.error)
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -69,15 +69,15 @@ const removeFriend = async (req, res, next) => {
         const del = await deleteFriend(user.uid, friendId);
         console.log(del)
         if (del.status) {
-            res.status(200).json(del.data)
+            return res.status(200).json(del.data)
         }
         else {
-            res.status(500).json(del.error)
+            return res.status(500).json(del.error)
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -93,17 +93,17 @@ const getCountOfFriends = async (req, res, next) => {
         const count = await countFriends(uid)
         // console.log(count)
         if (count.status) {
-            res.status(200).json(count.data)
+            return res.status(200).json(count.data)
         }
         else {
-            res.status(500).json({
+            return res.status(500).json({
                 error: "Not able to connect to source"
             })
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -153,13 +153,13 @@ const possibleConnections = async (req, res) => {
                 const details = await getMinDetails(i)
                 ans1.push(details.data)
             }
-            res.status(200).json(ans1)
+            return res.status(200).json(ans1)
         } catch (error) {
-            res.status(500).json({ error: error })
+            return res.status(500).json({ error: error })
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -172,14 +172,14 @@ const allFriendsData = async (req, res) => {
         const user = res.locals.user;
         try {
             const friends = await friend.find({}).clone().exec();
-            res.status(200).json(friends);
+            return res.status(200).json(friends);
         } catch (error) {
             return res.status(500).json(error);
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })

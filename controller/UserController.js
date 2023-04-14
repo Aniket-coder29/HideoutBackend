@@ -23,7 +23,7 @@ const getUserDetails = async (req, res) => {
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -35,14 +35,14 @@ const getAllUserData = async (req, res) => {
         const user = res.locals.user;
         try {
             const userDetail = await User.find({}).clone().exec();
-            res.status(200).json(userDetail);
+            return res.status(200).json(userDetail);
         } catch (error) {
             return res.status(500).json(error);
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -71,7 +71,7 @@ const getMiniDetails = async (req, res) => {
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -87,14 +87,14 @@ const getAllUsers = async (req, res) => {
             userDetail.forEach(element => {
                 retVal.push({ uid: element.uid, name: element.name, photo: element.photo, designation: element.designation })
             });
-            res.status(200).json(retVal);
+            return res.status(200).json(retVal);
         } catch (error) {
             return res.status(500).json(error);
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -133,7 +133,7 @@ const createUser = async (req, res) => {
         }
     }
     else {
-        res.status(404).json({
+        return res.status(404).json({
             "User": 'Not logged in',
         })
     }
@@ -147,16 +147,16 @@ const updateUser = async (req, res) => {
         const filter = { uid: uid };
         try {
             const findUser = await User.findOneAndUpdate(filter, req.body).clone().exec()
-            res.status(200).json({
+            return res.status(200).json({
                 status: 'User updated successfully',
             })
         }
         catch (error) {
-            res.status(500).json(error);
+            return res.status(500).json(error);
         }
     }
     else {
-        res.status(404).json({
+        return res.status(404).json({
             "User": 'Not logged in',
         })
     }
@@ -173,11 +173,11 @@ const deleteUser = async (req, res) => {
                 status: 'User deleted successfully',
             })
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     }
     else {
-        res.status(404).json({
+        return res.status(404).json({
             "User": 'Not logged in',
         })
     }
@@ -213,7 +213,7 @@ const checkUser = async (req, res) => {
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })

@@ -1,12 +1,8 @@
 
-//notification pura module
-
 //news api
 //jobs ->ud
 //youtube
 
-count req
-count sent req
 notification schema
 count notifications
 search results inside possibleConnections

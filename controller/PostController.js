@@ -10,14 +10,14 @@ const AllPosts = async (req, res, next) => {
         const user = res.locals.user;
         try {
             const posts = await Post.find({}).clone().exec();
-            res.status(200).json(posts);
+            return res.status(200).json(posts);
         } catch (error) {
             return res.status(500).json(error);
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -31,20 +31,20 @@ const getAllPosts = async (req, res, next) => {
             const posts = await getAllPost(user.uid)
             // console.log("get posts in post controller",posts)
             if (posts.status) {
-                res.status(200).json(posts.data);
+                return res.status(200).json(posts.data);
             }
             else {
-                res.status(500).json(posts.error)
+                return res.status(500).json(posts.error)
             }
 
         } catch (error) {
-            res.status(500).json(error);
+            return res.status(500).json(error);
         }
 
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -64,17 +64,17 @@ const getUserPost = async (req, res, next) => {
             // console.log(details)
             const post = await compilePosts2(details.data)
             // console.log(post)
-            res.status(200).json(post);
+            return res.status(200).json(post);
 
         } catch (error) {
             console.log(error)
-            res.status(500).json(error);
+            return res.status(500).json(error);
         }
 
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -95,12 +95,12 @@ const makePost = async (req, res) => {
             }
             const addPost = await Post.findOneAndUpdate(filter, { $push: { posts: req.body } }).clone().exec();
             // console.log(addPost)
-            res.status(200).json({
+            return res.status(200).json({
                 status: 1
             })
         }
         catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 status: 0,
                 error: error
             });
@@ -108,7 +108,7 @@ const makePost = async (req, res) => {
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -125,21 +125,21 @@ const deletePost = async (req, res) => {
             const delPost = await delete_post(user.uid, postId)
             console.log(delPost)
             if (delPost.status) {
-                res.status(200).json({ status: "Successfully deleted" })
+                return res.status(200).json({ status: "Successfully deleted" })
             }
             else {
-                res.status(500).json({
+                return res.status(500).json({
                     error: delPost.error
                 })
             }
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
 
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -156,21 +156,21 @@ const countPost = async (req, res) => {
             // console.log(PostMaker)
             if (!PostMaker) {
                 // console.log(save)
-                res.status(200).json(0);
+                return res.status(200).json(0);
             }
             else {
-                res.status(200).json(PostMaker.posts.length)
+                return res.status(200).json(PostMaker.posts.length)
             }
         }
         catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 error: error
             });
         }
     }
     else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -185,13 +185,13 @@ const addLike = async (req, res) => {
         try {
             const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $addToSet: { 'posts.$.likes': user.uid } }).clone().exec();
             // console.log(updatePost)
-            res.status(200).json("Like added")
+            return res.status(200).json("Like added")
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -206,13 +206,13 @@ const deleteLike = async (req, res) => {
         try {
             const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $pull: { 'posts.$.likes': user.uid } }).clone().exec();
             // console.log(updatePost)
-            res.status(200).json("Like removed")
+            return res.status(200).json("Like removed")
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -227,13 +227,13 @@ const countLike = async (req, res) => {
         try {
             const findPost = await Post.findOne({ uid: id }, { posts: { $elemMatch: { _id: postid } } }).clone().exec();
             // console.log(findPost)
-            res.status(200).json(findPost.posts[0].likes.length)
+            return res.status(200).json(findPost.posts[0].likes.length)
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -244,13 +244,13 @@ const allComments = async (req, res) => {
     if (res.locals.user) {
         try {
             const comment = await comments.find({}).clone().exec()
-            res.status(200).json(comment)
+            return res.status(200).json(comment)
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -271,13 +271,13 @@ const addComment = async (req, res) => {
             }
             const updatePost = await comments.findOneAndUpdate({ postid: postid }, { $addToSet: { comments: req.body } }).clone().exec();
             console.log(updatePost)
-            res.status(200).json("Comment added")
+            return res.status(200).json("Comment added")
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -292,13 +292,13 @@ const deleteComment = async (req, res) => {
         try {
             const updatePost = await comments.findOneAndUpdate({ postid: postid }, { $pull: { comments: { _id: commentId } } }).clone().exec();
             // console.log(updatePost)
-            res.status(200).json("Comment removed")
+            return res.status(200).json("Comment removed")
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -313,17 +313,17 @@ const countComments = async (req, res) => {
         try {
             const findpost = await comments.findOne({ postid: postid }).clone().exec()
             if (!findpost) {
-                res.status(200).json(0);
+                return res.status(200).json(0);
             }
-            // console.log(findpost.comments)
-
-            res.status(200).json(findpost.comments.length)
+            else{
+                return res.status(200).json(findpost.comments.length)
+            }
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -338,13 +338,13 @@ const addReply = async (req, res) => {
         try {
             const updateReply = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentId } } }, { $push: { 'comments.$.replies': req.body } }).clone().exec()
             // console.log(updateReply)
-            res.status(200).json("Successfully added")
+            return res.status(200).json("Successfully added")
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -359,13 +359,13 @@ const deleteReply = async (req, res) => {
         try {
             const updateReply = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentId } } }, { $pull: { 'comments.$.replies': { _id: replyid } } }).clone().exec()
             // console.log(updateReply)
-            res.status(200).json("Successfully deleted")
+            return res.status(200).json("Successfully deleted")
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
@@ -381,13 +381,13 @@ const countReplies = async (req, res) => {
             const find = await comments.findOne({ postid: postid }, { comments: { $elemMatch: { _id: commentId } } }).clone().exec();
             // console.log(find.comments[0].replies)
 
-            res.status(200).json(find.comments[0].replies.length)
+            return res.status(200).json(find.comments[0].replies.length)
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     } else {
         //redirect to login
-        res.status(404).json({
+        return res.status(404).json({
             status: 0,
             error: 'Not logged in',
         })
