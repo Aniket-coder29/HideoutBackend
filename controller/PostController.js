@@ -188,6 +188,27 @@ const deleteLike = async (req, res) => {
     }
 }
 
+const countLike = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const id = req.query.id, postid = req.query.postId
+        console.log(id, postid)
+        try {
+            const findPost = await Post.findOne({ uid: id }, { posts: { $elemMatch: { _id: postid } } }).clone().exec();
+            // console.log(findPost)
+            res.status(200).json(findPost.posts[0].likes.length)
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const allComments = async (req, res) => {
     if (res.locals.user) {
         try {
@@ -253,7 +274,7 @@ const deleteComment = async (req, res) => {
     }
 }
 
-const countComments = async(req,res)=>{
+const countComments = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const postid = req.query.postId
@@ -263,8 +284,8 @@ const countComments = async(req,res)=>{
             if (!findpost) {
                 res.status(200).json(0);
             }
-            console.log(findpost.comments)
-           
+            // console.log(findpost.comments)
+
             res.status(200).json(findpost.comments.length)
         } catch (error) {
             res.status(500).json(error)
@@ -326,7 +347,7 @@ const countReplies = async (req, res) => {
         const postid = req.query.postId, commentId = req.query.commentId
         console.log(postid, commentId)
         try {
-            const find = await comments.findOne({ postid: postid}, {comments: { $elemMatch: { _id: commentId } } }).clone().exec();
+            const find = await comments.findOne({ postid: postid }, { comments: { $elemMatch: { _id: commentId } } }).clone().exec();
             // console.log(find.comments[0].replies)
 
             res.status(200).json(find.comments[0].replies.length)
@@ -342,4 +363,4 @@ const countReplies = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, allComments }
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, countLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, allComments }
