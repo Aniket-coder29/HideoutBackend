@@ -1,4 +1,4 @@
-const { getUserPost, getAllPosts, makePost, deletePost, addLike, addComment, deleteLike, deleteComment, AllPosts, addReply, allComments } = require('../controller/PostController');
+const { getUserPost, getAllPosts, makePost, deletePost, addLike, addComment, deleteLike, deleteComment, AllPosts, addReply, allComments, deleteReply } = require('../controller/PostController');
 const router = require('express').Router();
 
 //post routes will be here
@@ -20,6 +20,8 @@ router.get('/unlike', deleteLike)
 router.get('/deleteComment',deleteComment)
 
 router.post('/addReply', addReply)
+
+router.get('/deleteReply', deleteReply)
 
 router.get('/getAllPostData', AllPosts)
 

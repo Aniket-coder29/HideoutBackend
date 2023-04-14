@@ -211,9 +211,9 @@ const addComment = async (req, res) => {
         const postid = req.query.postId
         console.log(postid)
         try {
-            const findpost = await comments.findOne({postid:postid}).clone().exec()
-            if(!findpost){
-                const newPostComment = new comments({postid:postid});
+            const findpost = await comments.findOne({ postid: postid }).clone().exec()
+            if (!findpost) {
+                const newPostComment = new comments({ postid: postid });
                 const save = await newPostComment.save()
                 console.log(save)
             }
@@ -257,14 +257,11 @@ const addReply = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
-        console.log(id, postid, commentId)
+        console.log(postid, commentId)
         try {
-
-            // const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } }, 'posts.$.comments':{$elemMatch: { _id: commentId }} }, { $addToSet: { 'posts.$.comments': req.body } }).clone().exec();
-            const findp = await Post.find({ uid: id, posts: { $elemMatch: { _id: postid } } }).clone().exec();
-            console.log(findp)
-            // console.log(updatePost)
-            res.status(200).json(findp)
+            const updateReply = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentId } } }, { $push: { 'comments.$.replies': req.body } }).clone().exec()
+            // console.log(updateReply)
+            res.status(200).json("Successfully added")
         } catch (error) {
             res.status(500).json(error)
         }
@@ -277,4 +274,25 @@ const addReply = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment, AllPosts, addReply, allComments }
+const deleteReply = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const postid = req.query.postId, commentId = req.query.commentId, replyid = req.query.replyId
+        console.log(postid, commentId, replyid)
+        try {
+            const updateReply = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentId } } }, { $pull: { 'comments.$.replies': { _id: replyid } } }).clone().exec()
+            // console.log(updateReply)
+            res.status(200).json("Successfully deleted")
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment, AllPosts, addReply, deleteReply, allComments }
