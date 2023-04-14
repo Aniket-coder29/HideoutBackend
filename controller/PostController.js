@@ -147,4 +147,67 @@ const addLike = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike }
+const deleteLike = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const id = req.query.id, postid = req.query.postId
+        console.log(id, postid)
+        try {
+            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $pull: { 'posts.$.likes': user.uid } }).clone().exec();
+            // console.log(updatePost)
+            res.status(200).json("Like removed")
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+const addComment = async(req,res)=>{
+    if (res.locals.user) {
+        const user = res.locals.user
+        const id = req.query.id, postid = req.query.postId
+        console.log(id, postid)
+        try {
+            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $addToSet: { 'posts.$.comments': req.body } }).clone().exec();
+            // console.log(updatePost)
+            res.status(200).json("Comment added")
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+const deleteComment = async(req,res)=>{
+    if (res.locals.user) {
+        const user = res.locals.user
+        const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
+        console.log(id, postid)
+        try {
+            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $pull: { 'posts.$.comments': {_id:commentId} } }).clone().exec();
+            // console.log(updatePost)
+            res.status(200).json("Comment removed")
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment}
