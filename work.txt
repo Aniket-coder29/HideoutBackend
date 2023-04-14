@@ -5,10 +5,13 @@
 //jobs ->ud
 //youtube
 
-
-timestamp k liye schema in post
-like comment add remove
+reply add remove
+count req
+count sent req
+count Comment
+count like
+count replies
 notification schema
-update profile of all
+count notifications
 search results inside possibleConnections
 search overall

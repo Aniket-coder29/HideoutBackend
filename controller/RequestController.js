@@ -149,4 +149,23 @@ const rejectFriendRequest = async (req, res, next) => {
     }
 };
 
-module.exports = { makeFriendRequest, deleteFriendRequest, acceptFriendRequest, getAllRequests, rejectFriendRequest, getAllSentRequests };
+const AllRequests = async (req, res, next) => {
+    if (res.locals.user) {
+        const user = res.locals.user;
+        try {
+            const requests = await Request.find({}).clone().exec();
+            res.status(200).json(requests);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { makeFriendRequest, deleteFriendRequest, acceptFriendRequest, getAllRequests, rejectFriendRequest, getAllSentRequests, AllRequests };

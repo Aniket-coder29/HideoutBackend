@@ -8,7 +8,7 @@ const getUserDetails = async (req, res) => {
             const uid = req.query.uid ? req.query.uid : user.uid
 
             if (!uid)
-                return res.status(500).json({ "error": "no uid passed" })     
+                return res.status(500).json({ "error": "no uid passed" })
             const userDetails = await getDetails(uid)
             // console.log(userDetails)
             if (userDetails.status) {
@@ -30,6 +30,25 @@ const getUserDetails = async (req, res) => {
     }
 };
 
+const getAllUserData = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user;
+        try {
+            const userDetail = await User.find({}).clone().exec();
+            res.status(200).json(userDetail);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const getMiniDetails = async (req, res) => {
     if (res.locals.user) {
         try {
@@ -41,7 +60,6 @@ const getMiniDetails = async (req, res) => {
 
             const userDetails = await getMinDetails(uid)
             if (userDetails.status) {
-                // let retval = { uid: userDetails.data.uid, photo: userDetails.data.photo, name: userDetails.data.name, designation: userDetails.data.designation || "" }
                 return res.status(200).json(userDetails.data)
             }
             else {
@@ -62,23 +80,14 @@ const getMiniDetails = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     if (res.locals.user) {
+        const user = res.locals.user;
         try {
-            const user = res.locals.user;
-            const userDetails = User.find({}, (err, docs) => {
-                let retVal = []
-                if (err) {
-                    // console.log(err)
-                    return res.status(200).json(err);
-                }
-                else {
-                    // console.log(docs)
-                    (docs).forEach(element => {
-                        retVal.push({ uid: element.uid, name: element.name, photo: element.photo, designation: element.designation })
-                    });
-                    return res.status(200).json(retVal);
-                }
+            const userDetail = await User.find({}).clone().exec();
+            let retVal = []
+            userDetail.forEach(element => {
+                retVal.push({ uid: element.uid, name: element.name, photo: element.photo, designation: element.designation })
             });
-
+            res.status(200).json(retVal);
         } catch (error) {
             return res.status(500).json(error);
         }
@@ -132,19 +141,18 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     if (res.locals.user) {
+        console.log(req.body)
+        const user = res.locals.user;
+        const uid = req.query.uid ? req.query.uid : user.uid
+        const filter = { uid: uid };
         try {
-            console.log(req.body)
-            const user = res.locals.user;
-            const filter = { uid: user.uid };
-            const findUser = await User.findOneAndUpdate(filter, req.body)
-            return res.status(200).json({
+            const findUser = await User.findOneAndUpdate(filter, req.body).clone().exec()
+            res.status(200).json({
                 status: 'User updated successfully',
-                User: findUser,
             })
-
         }
         catch (error) {
-            return res.status(500).json(error);
+            res.status(500).json(error);
         }
     }
     else {
@@ -156,18 +164,16 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     if (res.locals.user) {
+        const user = res.locals.user;
+        const uid = req.query.uid ? req.query.uid : user.uid
+        const filter = { uid: uid };
         try {
-            const user = res.locals.user;
-            const filter = { uid: user.uid };
-            const findUser = await User.deleteOne(filter)
+            const findUser = await User.deleteOne(filter).clone().exec()
             return res.status(200).json({
                 status: 'User deleted successfully',
-                User: findUser,
             })
-
-        }
-        catch (error) {
-            return res.status(500).json(error);
+        } catch (error) {
+            res.status(500).json(error)
         }
     }
     else {
@@ -181,7 +187,7 @@ const checkUser = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user;
         const email = user.email;
-        const findEmail = await User.find({ email: email });
+        const findEmail = await User.find({ email: email }).clone().exec();
         console.log(findEmail)
         if (findEmail.length > 0) {
             const userDetail = findEmail[0];
@@ -214,4 +220,4 @@ const checkUser = async (req, res) => {
     }
 };
 
-module.exports = { checkUser, getAllUsers, getUserDetails, createUser, deleteUser, updateUser, getMiniDetails };
+module.exports = { checkUser, getAllUsers, getUserDetails, createUser, deleteUser, updateUser, getMiniDetails, getAllUserData };

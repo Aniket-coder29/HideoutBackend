@@ -4,6 +4,25 @@ const { getFriends } = require('../services/friendServices');
 const { getPost, getAllPost, compilePosts2, delete_post } = require('../services/postServices');
 const { getMinDetails } = require('../services/userServices');
 
+const AllPosts = async (req, res, next) => {
+    if (res.locals.user) {
+        const user = res.locals.user;
+        try {
+            const posts = await Post.find({}).clone().exec();
+            res.status(200).json(posts);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const getAllPosts = async (req, res, next) => {
     if (res.locals.user) {
         try {
@@ -168,7 +187,7 @@ const deleteLike = async (req, res) => {
     }
 }
 
-const addComment = async(req,res)=>{
+const addComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const id = req.query.id, postid = req.query.postId
@@ -189,13 +208,13 @@ const addComment = async(req,res)=>{
     }
 }
 
-const deleteComment = async(req,res)=>{
+const deleteComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
         console.log(id, postid)
         try {
-            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $pull: { 'posts.$.comments': {_id:commentId} } }).clone().exec();
+            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $pull: { 'posts.$.comments': { _id: commentId } } }).clone().exec();
             // console.log(updatePost)
             res.status(200).json("Comment removed")
         } catch (error) {
@@ -210,4 +229,27 @@ const deleteComment = async(req,res)=>{
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment}
+const addReply = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
+        console.log(id, postid,commentId)
+        try {
+            // const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } }, 'posts.$.comments':{$elemMatch: { _id: commentId }} }, { $addToSet: { 'posts.$.comments': req.body } }).clone().exec();
+            const findp = await Post.find({ uid: id, posts: { $elemMatch: { _id: postid } }, 'posts.$.comments':{$elemMatch: { _id: commentId }} }).clone().exec();
+            console.log(findp)
+            // console.log(updatePost)
+            res.status(200).json("Comment removed")
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment, AllPosts, addReply }

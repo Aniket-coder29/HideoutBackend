@@ -4,18 +4,18 @@ const Request = require('../models/request')
 const { countFriends, getFriends, deleteFriend, checkFriends } = require("../services/friendServices");
 const { getMinDetails } = require("../services/userServices");
 
-const checkFriend = async(req,res,next)=>{
-    if(res.locals.user){
+const checkFriend = async (req, res, next) => {
+    if (res.locals.user) {
         const user = res.locals.user
         const friendId = req.query.id
-        const check = await checkFriends(user.uid,friendId)
-        if(check.status){
+        const check = await checkFriends(user.uid, friendId)
+        if (check.status) {
             res.status(200).json(check.data)
         }
-        else{
+        else {
             res.status(500).json(check.error)
         }
-    }else{
+    } else {
         //redirect to login
         res.status(404).json({
             status: 0,
@@ -32,9 +32,9 @@ const getAllFriends = async (req, res, next) => {
             return res.status(500).json({ "error": "no uid passed" });
         const getFriend = await getFriends(uid)
         if (getFriend.status) {
-            if(getFriend.data)
+            if (getFriend.data)
                 res.status(200).json(getFriend.data.friends)
-            else{
+            else {
                 res.status(200).json([]);
             }
         }
@@ -58,12 +58,12 @@ const removeFriend = async (req, res, next) => {
         if (!friendId) {
             return;
         }
-        const del = await deleteFriend(user.uid,friendId);
+        const del = await deleteFriend(user.uid, friendId);
         console.log(del)
-        if(del.status){
+        if (del.status) {
             res.status(200).json(del.data)
         }
-        else{
+        else {
             res.status(500).json(del.error)
         }
     }
@@ -148,4 +148,23 @@ const possibleConnections = async (req, res) => {
 
 }
 
-module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections, checkFriend }
+const allFriendsData = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user;
+        try {
+            const friends = await friend.find({}).clone().exec();
+            res.status(200).json(friends);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections, checkFriend, allFriendsData }
