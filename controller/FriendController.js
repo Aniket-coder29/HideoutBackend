@@ -13,7 +13,11 @@ const getAllFriends = async (req, res, next) => {
             return res.status(500).json({ "error": "no uid passed" });
         const getFriend = await getFriends(uid)
         if (getFriend.status) {
-            res.status(200).json(getFriend.data.friends)
+            if(getFriend.data)
+                res.status(200).json(getFriend.data.friends)
+            else{
+                res.status(200).json([]);
+            }
         }
         else {
             res.status(500).json(getFriend.error)
