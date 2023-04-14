@@ -119,12 +119,18 @@ const possibleConnections = async (req, res) => {
             const friends = await friend.findOne({ uid: user.uid }, "friends").clone().exec();
             console.log(friends)
             const reqUsers = await Request.findOne({ uid: user.uid }, "sentRequests").clone().exec();
+            const reqsUsers = await Request.findOne({ uid: user.uid }, "requests").clone().exec();
             console.log(reqUsers)
             let ids = new Set()
             ids.add(user.uid)
             let ans = []
             if (reqUsers) {
                 for (let i of reqUsers.sentRequests) {
+                    ids.add(i)
+                }
+            }
+            if(reqsUsers){
+                for (let i of reqUsers.requests) {
                     ids.add(i)
                 }
             }
