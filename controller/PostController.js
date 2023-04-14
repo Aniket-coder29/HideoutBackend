@@ -315,10 +315,10 @@ const getAllCommentsOfPost = async (req, res) => {
         try {
             const findPost = await getComments(postid)
             if (findPost.status) {
-                res.status(200).json({ comments: findPost.data })
+                res.status(200).json(findPost.data )
             }
             else {
-                console.log("no request ever")
+                console.log("no comment ever")
                 res.status(200).json({ comments: [] })
             }
         } catch (error) {
