@@ -8,7 +8,7 @@ const commentSchema = new mongoose.Schema({
         unique: true
     },
     comments: [
-        {
+        new mongoose.Schema({
             uid: {
                 type: String,
                 required: true,
@@ -17,7 +17,7 @@ const commentSchema = new mongoose.Schema({
                 type: String,
             },
             replies: [
-                {
+                new mongoose.Schema({
                     uid: {
                         type: String,
                         required: true,
@@ -26,11 +26,12 @@ const commentSchema = new mongoose.Schema({
                         type: String,
                     },
                 },
+                    { timestamps: true }),
             ]
-        }
+        },
+            { timestamps: true })
     ],
-},
-    { timestamps: true }
+}
 );
 
 const comments = mongoose.model('comments', commentSchema);

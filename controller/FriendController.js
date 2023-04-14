@@ -129,7 +129,7 @@ const possibleConnections = async (req, res) => {
                     ids.add(i)
                 }
             }
-            if(reqsUsers){
+            if (reqsUsers) {
                 for (let i of reqUsers.requests) {
                     ids.add(i)
                 }

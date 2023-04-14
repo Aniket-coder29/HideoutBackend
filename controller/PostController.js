@@ -191,7 +191,7 @@ const deleteLike = async (req, res) => {
 const allComments = async (req, res) => {
     if (res.locals.user) {
         try {
-            const comment = comments.find({}).clone().exec()
+            const comment = await comments.find({}).clone().exec()
             res.status(200).json(comment)
         } catch (error) {
             res.status(500).json(error)
@@ -209,10 +209,16 @@ const addComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const postid = req.query.postId
-        console.log(id, postid)
+        console.log(postid)
         try {
+            const findpost = await comments.findOne({postid:postid}).clone().exec()
+            if(!findpost){
+                const newPostComment = new comments({postid:postid});
+                const save = await newPostComment.save()
+                console.log(save)
+            }
             const updatePost = await comments.findOneAndUpdate({ postid: postid }, { $addToSet: { comments: req.body } }).clone().exec();
-            // console.log(updatePost)
+            console.log(updatePost)
             res.status(200).json("Comment added")
         } catch (error) {
             res.status(500).json(error)
@@ -229,8 +235,8 @@ const addComment = async (req, res) => {
 const deleteComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
-        const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
-        console.log(id, postid)
+        const postid = req.query.postId, commentId = req.query.commentId
+        console.log(postid, commentId)
         try {
             const updatePost = await comments.findOneAndUpdate({ postid: postid }, { $pull: { comments: { _id: commentId } } }).clone().exec();
             // console.log(updatePost)
