@@ -6,7 +6,8 @@ const { getMinDetails } = require('../services/userServices');
 const getAllSentRequests = async (req, res, next) => {
     if (res.locals.user) {
         const user = res.locals.user;
-        const filter = { uid: user.uid };
+        const uid = req.query.uid ? req.query.uid : user.uid
+        const filter = { uid: uid };
         try {
             const findUser = await Request.findOne(filter).clone().exec()
             if (findUser) {
@@ -30,10 +31,39 @@ const getAllSentRequests = async (req, res, next) => {
     }
 }
 
+const countAllSentReqs = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user;
+        const uid = req.query.uid ? req.query.uid : user.uid
+        const filter = { uid: uid };
+        try {
+            const findUser = await Request.findOne(filter).clone().exec()
+            if (findUser) {
+                console.log(findUser)
+                res.status(200).json(findUser.sentRequests.length)
+            }
+            else {
+                console.log("no request ever")
+                res.status(200).json(0)
+            }
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const getAllRequests = async (req, res, next) => {
     if (res.locals.user) {
         const user = res.locals.user;
-        const filter = { uid: user.uid };
+        const uid = req.query.uid ? req.query.uid : user.uid
+        const filter = { uid: uid };
         try {
             const findUser = await Request.findOne(filter).clone().exec()
             if (findUser) {
@@ -41,7 +71,7 @@ const getAllRequests = async (req, res, next) => {
                 let reqs = []
                 for (let i of findUser.requests) {
                     const detail = await getMinDetails(i)
-                    if(detail.status){
+                    if (detail.status) {
                         reqs.push(detail.data)
                     }
                 }
@@ -50,6 +80,34 @@ const getAllRequests = async (req, res, next) => {
             else {
                 console.log("no request ever")
                 res.status(200).json([])
+            }
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+const countAllRequests = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user;
+        const uid = req.query.uid ? req.query.uid : user.uid
+        const filter = { uid: uid };
+        try {
+            const findUser = await Request.findOne(filter).clone().exec()
+            if (findUser) {
+                console.log(findUser)
+                res.status(200).json(findUser.requests.length)
+            }
+            else {
+                console.log("no request ever")
+                res.status(200).json(0)
             }
         } catch (error) {
             res.status(500).json(error)
@@ -176,4 +234,4 @@ const AllRequests = async (req, res, next) => {
     }
 }
 
-module.exports = { makeFriendRequest, deleteFriendRequest, acceptFriendRequest, getAllRequests, rejectFriendRequest, getAllSentRequests, AllRequests };
+module.exports = { makeFriendRequest, deleteFriendRequest, acceptFriendRequest, getAllRequests, rejectFriendRequest, getAllSentRequests, AllRequests, countAllRequests, countAllSentReqs };

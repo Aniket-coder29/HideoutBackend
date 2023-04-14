@@ -5,12 +5,8 @@
 //jobs ->ud
 //youtube
 
-reply add remove
 count req
 count sent req
-count Comment
-count like
-count replies
 notification schema
 count notifications
 search results inside possibleConnections
