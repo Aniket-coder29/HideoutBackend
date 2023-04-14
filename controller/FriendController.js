@@ -115,12 +115,13 @@ const possibleConnections = async (req, res) => {
         const user = res.locals.user
         try {
             const allUsers = await User.find({}, "uid").clone().exec();
-            console.log(allUsers)
+            // console.log(allUsers)
             const friends = await friend.findOne({ uid: user.uid }, "friends").clone().exec();
-            console.log(friends)
+            // console.log(friends)
             const reqUsers = await Request.findOne({ uid: user.uid }, "sentRequests").clone().exec();
             const reqsUsers = await Request.findOne({ uid: user.uid }, "requests").clone().exec();
-            console.log(reqUsers)
+            // console.log(reqUsers)
+            // console.log(reqsUsers)
             let ids = new Set()
             ids.add(user.uid)
             let ans = []
@@ -130,7 +131,7 @@ const possibleConnections = async (req, res) => {
                 }
             }
             if (reqsUsers) {
-                for (let i of reqUsers.requests) {
+                for (let i of reqsUsers.requests) {
                     ids.add(i)
                 }
             }
