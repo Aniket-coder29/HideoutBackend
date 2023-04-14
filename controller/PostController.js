@@ -146,6 +146,37 @@ const deletePost = async (req, res) => {
     }
 }
 
+const countPost = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const uid = req.query.uid ? req.query.uid : user.uid;
+        const filter = { uid: uid }
+        try {
+            const PostMaker = await Post.findOne(filter).clone().exec();
+            // console.log(PostMaker)
+            if (!PostMaker) {
+                // console.log(save)
+                res.status(200).json(0);
+            }
+            else {
+                res.status(200).json(PostMaker.posts.length)
+            }
+        }
+        catch (error) {
+            res.status(500).json({
+                error: error
+            });
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const addLike = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
@@ -363,4 +394,4 @@ const countReplies = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, countLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, allComments }
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, countPost, addLike, deleteLike, countLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, allComments }
