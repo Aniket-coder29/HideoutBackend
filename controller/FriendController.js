@@ -32,8 +32,16 @@ const getAllFriends = async (req, res, next) => {
             return res.status(500).json({ "error": "no uid passed" });
         const getFriend = await getFriends(uid)
         if (getFriend.status) {
-            if (getFriend.data)
-                res.status(200).json(getFriend.data.friends)
+            if (getFriend.data) {
+                let friends = []
+                for (let i of getFriend.data.friends) {
+                    const detail = await getMinDetails(i)
+                    if (detail.status) {
+                        friends.push(detail.data)
+                    }
+                }
+                res.status(200).json(friends)
+            }
             else {
                 res.status(200).json([]);
             }
@@ -115,11 +123,15 @@ const possibleConnections = async (req, res) => {
             let ids = new Set()
             ids.add(user.uid)
             let ans = []
-            for (let i of reqUsers.sentRequests) {
-                ids.add(i)
+            if (reqUsers) {
+                for (let i of reqUsers.sentRequests) {
+                    ids.add(i)
+                }
             }
-            for (let i of friends.friends) {
-                ids.add(i)
+            if (friends) {
+                for (let i of friends.friends) {
+                    ids.add(i)
+                }
             }
             for (let i of allUsers) {
                 let iniSize = ids.size

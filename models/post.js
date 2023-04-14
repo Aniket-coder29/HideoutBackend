@@ -1,57 +1,57 @@
 const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema({
-    uid:{
+    uid: {
         type: String,
         required: true,
     },
-    posts:[
+    posts: [
         new mongoose.Schema({
-            caption:{
+            caption: {
                 type: String,
             },
-            images:[
+            images: [
                 {
                     type: String,
                 },
             ],
-            videos:[
+            videos: [
                 {
-                type: String,
+                    type: String,
                 },
             ],
-            likes:[
+            likes: [
                 {
                     type: String,
                 }
             ],
-            comments:[
-                {
-                    uid:{
-                        type: String,
-                        required: true,
-                    },
-                    comment:{
-                        type: String,
-                    },
-                    replies:[
-                        {
-                            uid:{
-                                type: String,
-                                required: true,
-                            },
-                            reply:{
-                                type: String,
-                            },
-                        },
-                    ]
-                }
-            ],
+            // comments: [
+            //     {
+            //         uid: {
+            //             type: String,
+            //             required: true,
+            //         },
+            //         comment: {
+            //             type: String,
+            //         },
+            //         replies: [
+            //             {
+            //                 uid: {
+            //                     type: String,
+            //                     required: true,
+            //                 },
+            //                 reply: {
+            //                     type: String,
+            //                 },
+            //             },
+            //         ]
+            //     }
+            // ],
         },
-        {timestamps:true})
+            { timestamps: true })
     ],
 });
 
-const post = mongoose.model("Post",postSchema);
+const post = mongoose.model("Post", postSchema);
 
-module.exports=post;
+module.exports = post;

@@ -9,15 +9,15 @@ router.get('/userpost', getUserPost)
 
 router.get('/allPosts', getAllPosts)
 
-router.delete('/deletePost', deletePost)
+router.get('/deletePost', deletePost)
 
-router.post('/addlike', addLike)
+router.get('/addlike', addLike)
 
 router.post('/addComment',addComment)
 
-router.post('/unlike', deleteLike)
+router.get('/unlike', deleteLike)
 
-router.post('/deleteComment',deleteComment)
+router.get('/deleteComment',deleteComment)
 
 router.post('/addReply', addReply)
 

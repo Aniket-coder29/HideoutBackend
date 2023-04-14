@@ -2,26 +2,26 @@ const mongoose = require('mongoose')
 
 const videoSchema = new mongoose.Schema({
 
-    postid:{
+    postid: {
         type: String,
         required: true,
         unique: true
     },
-    videos:[
+    videos: [
         {
-            video:{
+            video: {
                 type: String,
-            }, 
+            },
         }
     ],
-    total:{
-        type:Number,
+    total: {
+        type: Number,
         default: 0
     }
 },
-{timestamps: true}
+    { timestamps: true }
 );
 
-const videos = mongoose.model('videos',videoSchema);
+const videos = mongoose.model('videos', videoSchema);
 
 module.exports(videos);

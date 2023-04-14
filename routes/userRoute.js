@@ -12,7 +12,7 @@ router.get('/create',createUser);
 
 router.put('/update',updateUser);
 
-router.delete('/delete',deleteUser);
+router.get('/delete',deleteUser);
 
 router.get('/checkuser',checkUser);
 

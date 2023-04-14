@@ -1,6 +1,7 @@
 const Friend = require('../models/friend');
 const Request = require('../models/request')
-const { deleteRequest, addFriend, addRequest } = require('../services/friendServices')
+const { deleteRequest, addFriend, addRequest } = require('../services/friendServices');
+const { getMinDetails } = require('../services/userServices');
 
 const getAllSentRequests = async (req, res, next) => {
     if (res.locals.user) {
@@ -37,7 +38,14 @@ const getAllRequests = async (req, res, next) => {
             const findUser = await Request.findOne(filter).clone().exec()
             if (findUser) {
                 console.log(findUser)
-                res.status(200).json(findUser.requests)
+                let reqs = []
+                for (let i of findUser.requests) {
+                    const detail = await getMinDetails(i)
+                    if(detail.status){
+                        reqs.push(detail.data)
+                    }
+                }
+                res.status(200).json(reqs)
             }
             else {
                 console.log("no request ever")

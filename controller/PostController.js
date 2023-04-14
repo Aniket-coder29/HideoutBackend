@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const Friend = require('../models/friend');
+const comments = require('../models/comment');
 const { getFriends } = require('../services/friendServices');
 const { getPost, getAllPost, compilePosts2, delete_post } = require('../services/postServices');
 const { getMinDetails } = require('../services/userServices');
@@ -187,13 +188,30 @@ const deleteLike = async (req, res) => {
     }
 }
 
+const allComments = async (req, res) => {
+    if (res.locals.user) {
+        try {
+            const comment = comments.find({}).clone().exec()
+            res.status(200).json(comment)
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const addComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
-        const id = req.query.id, postid = req.query.postId
+        const postid = req.query.postId
         console.log(id, postid)
         try {
-            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $addToSet: { 'posts.$.comments': req.body } }).clone().exec();
+            const updatePost = await comments.findOneAndUpdate({ postid: postid }, { $addToSet: { comments: req.body } }).clone().exec();
             // console.log(updatePost)
             res.status(200).json("Comment added")
         } catch (error) {
@@ -214,7 +232,7 @@ const deleteComment = async (req, res) => {
         const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
         console.log(id, postid)
         try {
-            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $pull: { 'posts.$.comments': { _id: commentId } } }).clone().exec();
+            const updatePost = await comments.findOneAndUpdate({ postid: postid }, { $pull: { comments: { _id: commentId } } }).clone().exec();
             // console.log(updatePost)
             res.status(200).json("Comment removed")
         } catch (error) {
@@ -233,13 +251,14 @@ const addReply = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
-        console.log(id, postid,commentId)
+        console.log(id, postid, commentId)
         try {
+
             // const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } }, 'posts.$.comments':{$elemMatch: { _id: commentId }} }, { $addToSet: { 'posts.$.comments': req.body } }).clone().exec();
-            const findp = await Post.find({ uid: id, posts: { $elemMatch: { _id: postid } }, 'posts.$.comments':{$elemMatch: { _id: commentId }} }).clone().exec();
+            const findp = await Post.find({ uid: id, posts: { $elemMatch: { _id: postid } } }).clone().exec();
             console.log(findp)
             // console.log(updatePost)
-            res.status(200).json("Comment removed")
+            res.status(200).json(findp)
         } catch (error) {
             res.status(500).json(error)
         }
@@ -252,4 +271,4 @@ const addReply = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment, AllPosts, addReply }
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike, deleteLike, addComment, deleteComment, AllPosts, addReply, allComments }

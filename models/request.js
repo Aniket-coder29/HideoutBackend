@@ -1,27 +1,27 @@
 const mongoose = require('mongoose');
 
 const requestSchema = new mongoose.Schema({
-    uid:{
+    uid: {
         type: String,
         required: true,
         unique: true
     },
-    requests:[
+    requests: [
         {
             type: String,
             required: true,
         },
-        {timestamps:true}
+        { timestamps: true }
     ],
-    sentRequests:[
+    sentRequests: [
         {
-            type:String,
+            type: String,
             required: true,
         },
-        {timestamps:true}
+        { timestamps: true }
     ]
 })
 
-const request = mongoose.model("Request",requestSchema);
+const request = mongoose.model("Request", requestSchema);
 
-module.exports= request;
+module.exports = request;

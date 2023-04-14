@@ -1,80 +1,80 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
-const userSchema= new mongoose.Schema({
-    uid:{
+const userSchema = new mongoose.Schema({
+    uid: {
         type: String,
         required: true,
         unique: true
     },
-    name:{
+    name: {
         type: String,
         default: ""
     },
-    email:{
+    email: {
         type: String,
         required: true,
         unique: true
     },
-    phone:{
+    phone: {
         type: String
     },
-    address:{
-        city:{
-            type:String,
-        },
-        state:{
+    address: {
+        city: {
             type: String,
         },
-        country:{
+        state: {
             type: String,
         },
-        pincode:{
-            type:String,
+        country: {
+            type: String,
+        },
+        pincode: {
+            type: String,
         }
     },
-    dob:{
+    dob: {
         type: Date
     },
-    photo:{
+    photo: {
         type: String,
         default: "https://cdn-icons-png.flaticon.com/512/1053/1053244.png"
     },
-    coverPhoto:{
+    coverPhoto: {
         type: String,
         default: ""
     },
-    isAdmin:{
-        type:Boolean,
-        default:false
+    isAdmin: {
+        type: Boolean,
+        default: false
     },
-    social_links:{
-        linkedIn:{
+    social_links: {
+        linkedIn: {
             type: String,
         },
-        instagram:{
+        instagram: {
             type: String,
         },
-        github:{
+        github: {
             type: String,
         },
-        otherLinks:[
+        otherLinks: [
             {
-                link:{
-                    type:String
+                link: {
+                    type: String
                 },
             }
         ]
     },
-    about:{
-        type:String,
+    about: {
+        type: String,
     },
-    designation:{
-        type:String,
+    designation: {
+        type: String,
     }
 },
-{timestamps:true}
+    { timestamps: true }
 );
 
-const user = mongoose.model("User",userSchema);
+const user = mongoose.model("User", userSchema);
 
-module.exports=user;
+module.exports = user;
