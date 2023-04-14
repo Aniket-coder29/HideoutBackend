@@ -70,12 +70,12 @@ const deleteRequest = async (id, friendId) => {
         const deleteReq1 = await Request.findOneAndUpdate(filter1, { $pull: { sentRequests: friendId } }).clone().exec()
         const deleteReq = await Request.findOneAndUpdate(filter2, { $pull: { requests: id } }).clone().exec()
         return {
-            status:1
+            status: 1
         }
     } catch (error) {
         return {
-            status:0,
-            error:error
+            status: 0,
+            error: error
         }
     }
     return true;
@@ -162,16 +162,23 @@ const checkFriend = async (id, friendId) => {
 const countFriends = async (id) => {
     const filter = { uid: id }
     try {
-        const friends = await Friend.findOne(filter,"friends").clone().exec();
+        const friends = await Friend.findOne(filter, "friends").clone().exec();
         // console.log(friends.friends.length)
+        console.log(friends)
+        if (!friends) {
+            return {
+                status: 1,
+                data: 0
+            }
+        }
         return {
-            status:1,
+            status: 1,
             data: friends.friends.length
         }
     } catch (error) {
         return {
-            status:0,
-            error:error
+            status: 0,
+            error: error
         }
     }
 }

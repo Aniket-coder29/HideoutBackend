@@ -55,7 +55,7 @@ const getAllPost = async (id) => {
         // let posts = []
         if (allfriends.status) {
             const allIds = new Set();
-            const friends = allfriends.data.friends;
+            const friends = allfriends.data?allfriends.data.friends:[];
             // console.log("friends array",friends)
             friends.forEach(element => {
                 allIds.add(element)
