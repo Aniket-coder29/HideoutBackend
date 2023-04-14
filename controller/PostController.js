@@ -101,13 +101,13 @@ const deletePost = async (req, res) => {
             const user = res.locals.user
             const filter = { uid: user.uid }
             const postId = req.query.postId
-            console.log(user.uid,postId)
+            console.log(user.uid, postId)
             const delPost = await delete_post(user.uid, postId)
             console.log(delPost)
             if (delPost.status) {
                 res.status(200).json({ status: "Successfully deleted" })
             }
-            else{
+            else {
                 res.status(500).json({
                     error: delPost.error
                 })
@@ -117,6 +117,34 @@ const deletePost = async (req, res) => {
         }
 
     }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost }
+const addLike = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const id = req.query.id, postid = req.query.postId
+        console.log(id, postid)
+        try {
+            const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $addToSet: { 'posts.$.likes': user.uid } }).clone().exec();
+            // console.log(updatePost)
+            res.status(200).json("Like added")
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, addLike }

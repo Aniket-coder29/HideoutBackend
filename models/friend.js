@@ -7,18 +7,7 @@ const friendSchema = new mongoose.Schema({
     },
     friends: [
         {
-            uid: {
-                type: String,
-            },
-            name: {
-                type: String,
-            },
-            designation: {
-                type: String,
-            },
-            photo: {
-                type: String,
-            }
+            type: String,
         },
         { timestamps: true }
     ],

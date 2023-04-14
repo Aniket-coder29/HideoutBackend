@@ -1,9 +1,28 @@
 const friend = require("../models/friend");
 const User = require('../models/user');
 const Request = require('../models/request')
-const { countFriends, getFriends } = require("../services/friendServices");
+const { countFriends, getFriends, deleteFriend, checkFriends } = require("../services/friendServices");
 const { getMinDetails } = require("../services/userServices");
 
+const checkFriend = async(req,res,next)=>{
+    if(res.locals.user){
+        const user = res.locals.user
+        const friendId = req.query.id
+        const check = await checkFriends(user.uid,friendId)
+        if(check.status){
+            res.status(200).json(check.data)
+        }
+        else{
+            res.status(500).json(check.error)
+        }
+    }else{
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
 
 const getAllFriends = async (req, res, next) => {
     if (res.locals.user) {
@@ -39,49 +58,14 @@ const removeFriend = async (req, res, next) => {
         if (!friendId) {
             return;
         }
-        const filter1 = { uid: friendId }, filter2 = { uid: user.uid }
-        const findUser1 = friend.findOne(filter1, async (err, docs) => {
-            if (err) {
-                // console.log(err)
-                res.status(200).json(err)
-            }
-            else {
-                if (!docs) {
-                    return;
-                }
-                friend.findOneAndUpdate(filter1, { $pullAll: { friends: [user.uid] } }, async (err, docs) => {
-                    if (err) {
-                        // console.log(err)
-                        res.status(200).json(err)
-                    }
-                    else {
-                        // console.log(docs)
-                        res.status(200).json(docs)
-                    }
-                })
-            }
-        })
-        const findUser2 = friend.findOne(filter2, async (err, docs) => {
-            if (err) {
-                // console.log(err)
-                res.status(200).json(err)
-            }
-            else {
-                if (!docs) {
-                    return;
-                }
-                friend.findOneAndUpdate(filter2, { $pullAll: { friends: [friendId] } }, async (err, docs) => {
-                    if (err) {
-                        // console.log(err)
-                        res.status(200).json(err)
-                    }
-                    else {
-                        // console.log(docs)
-                        res.status(200).json(docs)
-                    }
-                })
-            }
-        })
+        const del = await deleteFriend(user.uid,friendId);
+        console.log(del)
+        if(del.status){
+            res.status(200).json(del.data)
+        }
+        else{
+            res.status(500).json(del.error)
+        }
     }
     else {
         //redirect to login
@@ -135,7 +119,7 @@ const possibleConnections = async (req, res) => {
                 ids.add(i)
             }
             for (let i of friends.friends) {
-                ids.add(i.uid)
+                ids.add(i)
             }
             for (let i of allUsers) {
                 let iniSize = ids.size
@@ -164,4 +148,4 @@ const possibleConnections = async (req, res) => {
 
 }
 
-module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections }
+module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections, checkFriend }

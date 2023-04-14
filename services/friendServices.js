@@ -3,33 +3,55 @@ const Request = require('../models/request');
 const { getMinDetails } = require('./userServices');
 
 const checkSentRequest = async (id, friendId) => {
-    const filter = { uid: friendId };
-    const check = await Request.find({ requests: { "$in": id } }, async (err, docs) => {
-        if (err) {
-            console.log(err)
-            return false
+    const filter = { uid: id };
+    try {
+        const check = await Request.findOne(filter).clone().exec();
+        if (check) {
+            for(let i of check.sentRequests){
+                if(i===friendId){
+            return {
+                status: 1,
+                data: true
+            }
+                }
+            }
         }
-        else {
-            console.log(docs)
-            return true;
+        return {
+            status: 1,
+            data: false
         }
-    }).clone()
-    return false
+    } catch (error) {
+        return {
+            status: 0,
+            error: error
+        }
+    }
 }
 
 const checkRecievedRequest = async (id, friendId) => {
     const filter = { uid: id };
-    const check = await Request.find({ requests: { "$in": friendId } }, async (err, docs) => {
-        if (err) {
-            console.log(err)
-            return false
+    try {
+        const check = await Request.findOne(filter).clone().exec();
+        if (check) {
+            for(let i of check.requests){
+                if(i===friendId){
+            return {
+                status: 1,
+                data: true
+            }
+                }
+            }
         }
-        else {
-            console.log(docs)
-            return true;
+        return {
+            status: 1,
+            data: false
         }
-    }).clone()
-    return false
+    } catch (error) {
+        return {
+            status: 0,
+            error: error
+        }
+    }
 }
 
 const addRequest = async (id, friendId) => {
@@ -84,8 +106,6 @@ const deleteRequest = async (id, friendId) => {
 const addFriend = async (id, friendId) => {
     const filter = { uid: id }
     console.log(id, "adding", friendId);
-    const friendDetails = await getMinDetails(friendId)
-    console.log(friendDetails)
     try {
         const user = await Friend.findOne(filter).clone().exec()
         console.log(user)
@@ -94,8 +114,7 @@ const addFriend = async (id, friendId) => {
             const save = await newFriend.save();
             console.log(save)
         }
-        console.log(friendDetails.data)
-        const friendAdd = await Friend.findOneAndUpdate(filter, { $addToSet: { friends: friendDetails.data } }).clone().exec()
+        const friendAdd = await Friend.findOneAndUpdate(filter, { $addToSet: { friends: friendId } }).clone().exec()
         console.log(friendAdd)
         if (!friendAdd) {
             return {
@@ -115,48 +134,61 @@ const addFriend = async (id, friendId) => {
 }
 
 const deleteFriend = async (id, friendId) => {
-    const filter = { uid: id }
-    await Friend.findOne(filter, async (err, docs) => {
-        if (err) {
-            // console.log(err)
-            return false
+    const filter1 = { uid: id }, filter2 = { uid: friendId }
+    try {
+        const finduser1 = await Friend.findOne(filter1).clone().exec();
+        if (!finduser1) {
+            const newFriend = new Friend(filter);
+            const save = await newFriend.save();
+            console.log(save)
         }
-        else {
-            // console.log(docs)
-            if (!docs) {
-                const newFriend = new Friend(filter);
-                const save = newFriend.save();
-                // console.log("new entry made")
-                // console.log(save)
-            }
-            await Friend.findOneAndUpdate(filter, { $pullAll: { friends: [friendId] } }, async (err, docs) => {
-                if (err) {
-                    // console.log(err)
-                    return false
-                }
-                else {
-                    // console.log(docs)
-                    // res.status(200).json(docs)
-                }
-            }).clone()
+        const update1 = await Friend.findOneAndUpdate(filter1, { $pull: { friends: friendId } }).clone().exec()
+        console.log(update1)
+        const finduser2 = await Friend.findOne(filter2).clone().exec();
+        if (!finduser2) {
+            const newFriend = new Friend(filter2);
+            const save = await newFriend.save();
+            console.log(save)
         }
-    }).clone()
-    return true
+        const update2 = await Friend.findOneAndUpdate(filter2, { $pull: { friends: id } }).clone().exec()
+        console.log(update2)
+        return {
+            status: 1,
+            data: "Successfully deleted"
+        }
+    } catch (error) {
+        return {
+            status: 0,
+            error: error
+        }
+    }
+
 }
 
-const checkFriend = async (id, friendId) => {
+const checkFriends = async (id, friendId) => {
     const filter = { uid: id };
-    const check = await Friend.find({ friends: { "$in": friendId } }, async (err, docs) => {
-        if (err) {
-            console.log(err)
-            return false
+    try {
+        const check = await Friend.findOne(filter).clone().exec();
+        if (check) {
+            for(let i of check.friends){
+                if(i===friendId){
+            return {
+                status: 1,
+                data: true
+            }
+                }
+            }
         }
-        else {
-            console.log(docs)
-            return true;
+        return {
+            status: 1,
+            data: false
         }
-    }).clone()
-    return false
+    } catch (error) {
+        return {
+            status: 0,
+            error: error
+        }
+    }
 }
 
 const countFriends = async (id) => {
@@ -200,4 +232,4 @@ const getFriends = async (id) => {
         }
     }
 }
-module.exports = { addRequest, deleteRequest, addFriend, deleteFriend, checkFriend, checkSentRequest, checkRecievedRequest, countFriends, getFriends }
+module.exports = { addRequest, deleteRequest, addFriend, deleteFriend, checkFriends, checkSentRequest, checkRecievedRequest, countFriends, getFriends }

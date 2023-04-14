@@ -6,7 +6,7 @@ const postSchema = new mongoose.Schema({
         required: true,
     },
     posts:[
-        {
+        new mongoose.Schema({
             caption:{
                 type: String,
             },
@@ -48,7 +48,7 @@ const postSchema = new mongoose.Schema({
                 }
             ],
         },
-        {timestamps:true}
+        {timestamps:true})
     ],
 });
 

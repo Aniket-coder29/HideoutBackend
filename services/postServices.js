@@ -24,7 +24,7 @@ const compilePosts2 = async (ele) => {
     const post = await getPost(ele.uid)
     if (post.status && post.data) {
         post.data.posts.forEach((pos) => {
-            const rt = { ...ele.toJSON(),...pos.toJSON() }
+            const rt = { ...ele.toJSON(), ...pos.toJSON() }
             posts.push(rt)
         })
     }
@@ -55,10 +55,11 @@ const getAllPost = async (id) => {
         // let posts = []
         if (allfriends.status) {
             const allIds = new Set();
-            const friends = allfriends.data?allfriends.data.friends:[];
+            const friends = allfriends.data ? allfriends.data.friends : [];
             // console.log("friends array",friends)
-            friends.forEach(element => {
-                allIds.add(element)
+            friends.forEach(async (element) => {
+                const details = await getMinDetails(element)
+                allIds.add(details.data)
             });
             const details = await getMinDetails(id)
             allIds.add(details.data)

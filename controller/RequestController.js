@@ -1,18 +1,18 @@
 const Friend = require('../models/friend');
 const Request = require('../models/request')
-const {deleteRequest,addFriend, addRequest} = require('../services/friendServices')
+const { deleteRequest, addFriend, addRequest } = require('../services/friendServices')
 
-const getAllRequests = async(req,res,next)=>{
-    if(res.locals.user){
+const getAllSentRequests = async (req, res, next) => {
+    if (res.locals.user) {
         const user = res.locals.user;
-        const filter = {uid:user.uid};
+        const filter = { uid: user.uid };
         try {
             const findUser = await Request.findOne(filter).clone().exec()
-            if(findUser){
+            if (findUser) {
                 console.log(findUser)
-                res.status(200).json(findUser.requests)
+                res.status(200).json(findUser.sentRequests)
             }
-            else{
+            else {
                 console.log("no request ever")
                 res.status(200).json([])
             }
@@ -20,7 +20,7 @@ const getAllRequests = async(req,res,next)=>{
             res.status(500).json(error)
         }
     }
-    else{
+    else {
         //redirect to login
         res.status(404).json({
             status: 0,
@@ -29,35 +29,66 @@ const getAllRequests = async(req,res,next)=>{
     }
 }
 
-const makeFriendRequest = async(req,res,next)=>{
-    if(res.locals.user){
+const getAllRequests = async (req, res, next) => {
+    if (res.locals.user) {
         const user = res.locals.user;
-        const friendId = req.query.uid;
-        if(!friendId){
-            res.status(500).json({"error" : "no friend id found"});
+        const filter = { uid: user.uid };
+        try {
+            const findUser = await Request.findOne(filter).clone().exec()
+            if (findUser) {
+                console.log(findUser)
+                res.status(200).json(findUser.requests)
+            }
+            else {
+                console.log("no request ever")
+                res.status(200).json([])
+            }
+        } catch (error) {
+            res.status(500).json(error)
         }
-        const addReq = await addRequest(user.uid,friendId)
-        res.status(200).json({"Status" : "Success"})
     }
-    else{
+    else {
         //redirect to login
         res.status(404).json({
-            "User" : 'Not logged in',
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+const makeFriendRequest = async (req, res, next) => {
+    if (res.locals.user) {
+        const user = res.locals.user;
+        const friendId = req.query.uid;
+        if (!friendId) {
+            res.status(500).json({ "error": "no friend id found" });
+        }
+        const addReq = await addRequest(user.uid, friendId)
+        res.status(200).json({ "Status": "Success" })
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            "User": 'Not logged in',
         })
     }
 };
 
-const deleteFriendRequest = async(req,res,next)=>{
-    if(res.locals.user){
+const deleteFriendRequest = async (req, res, next) => {
+    if (res.locals.user) {
         const user = res.locals.user;
         const friendId = req.query.uid;
-        if(!friendId){
+        if (!friendId) {
             return;
         }
-        const delReq = await deleteRequest(user.uid,friendId)
-        res.status(200).json({Status: "Successfully Deleted"})
+        const del = await deleteRequest(user.uid, friendId)
+        if (del.status)
+            res.status(200).json({ Status: "Successfully Deleted" })
+        else {
+            res.status(500).json(del.error)
+        }
     }
-    else{
+    else {
         //redirect to login
         res.status(404).json({
             status: 0,
@@ -66,30 +97,30 @@ const deleteFriendRequest = async(req,res,next)=>{
     }
 };
 
-const acceptFriendRequest = async(req,res,next)=>{
-    if(res.locals.user){
+const acceptFriendRequest = async (req, res, next) => {
+    if (res.locals.user) {
         const user = res.locals.user;
         const friendId = req.query.uid;
-        if(!friendId){
+        if (!friendId) {
             return res.status(500).json({ "error": "no uid passed" });
         }
-        const add1 = await addFriend(user.uid,friendId)
-        if(add1.status===0){
+        const add1 = await addFriend(user.uid, friendId)
+        if (add1.status === 0) {
             res.status(500).json(add1.error)
         }
         console.log(add1)
-        const add2 = await addFriend(friendId,user.uid)
-        if(add2.status===0){
+        const add2 = await addFriend(friendId, user.uid)
+        if (add2.status === 0) {
             res.status(500).json(add2.error)
         }
         console.log(add2)
-        const del= await deleteRequest(user.uid,friendId)
-        if(!del){
+        const del = await deleteRequest(friendId, user.uid)
+        if (!del) {
             res.status(500).json(err)
         }
-        res.status(200).json({"Status":"Success"})
+        res.status(200).json({ "Status": "Success" })
     }
-    else{
+    else {
         //redirect to login
         res.status(404).json({
             status: 0,
@@ -98,17 +129,18 @@ const acceptFriendRequest = async(req,res,next)=>{
     }
 };
 
-const rejectFriendRequest = async(req,res,next)=>{
-    if(res.locals.user){
+const rejectFriendRequest = async (req, res, next) => {
+    if (res.locals.user) {
         const user = res.locals.user;
         const friendId = req.query.uid;
-        const del= await deleteRequest(friendId,user.uid)
-        if(!del){
-            res.status(200).json(err)
+        const del = await deleteRequest(friendId, user.uid)
+        if (del.status)
+            res.status(200).json({ Status: "Successfully Deleted" })
+        else {
+            res.status(500).json(del.error)
         }
-        res.status(200).json({"Status":"Success"})
     }
-    else{
+    else {
         //redirect to login
         res.status(404).json({
             status: 0,
@@ -117,4 +149,4 @@ const rejectFriendRequest = async(req,res,next)=>{
     }
 };
 
-module.exports = {makeFriendRequest,deleteFriendRequest,acceptFriendRequest,getAllRequests,rejectFriendRequest};
+module.exports = { makeFriendRequest, deleteFriendRequest, acceptFriendRequest, getAllRequests, rejectFriendRequest, getAllSentRequests };
