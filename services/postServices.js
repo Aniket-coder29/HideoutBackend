@@ -1,3 +1,4 @@
+const comments = require('../models/comment');
 const Post = require('../models/post');
 const { getFriends } = require('../services/friendServices')
 const { getMinDetails } = require('../services/userServices')
@@ -103,4 +104,29 @@ const delete_post = async (id, postid) => {
 
 }
 
-module.exports = { getPost, getAllPost, compilePosts2, delete_post }
+const getComments = async (postid) => {
+    try {
+        const comment = await comments.findOne({ postid: postid }).clone().exec()
+        // console.log(comment)
+        if (comment) {
+            return {
+                status: 1,
+                data: { comments: comment.comments }
+            }
+        }
+        else {
+            return {
+                status: 1,
+                data: { comments: [] }
+            }
+        }
+
+    } catch (error) {
+        return {
+            status: 0,
+            error: error
+        }
+    }
+}
+
+module.exports = { getPost, getAllPost, compilePosts2, delete_post, getComments }

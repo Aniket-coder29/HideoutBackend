@@ -9,9 +9,18 @@ const notificationSchema = new mongoose.Schema({
     },
     notifications: [
         new mongoose.Schema({
-            notification: {
+            action: {
+                type: Number
+            },
+            uid: {
                 type: String,
             },
+            postUid:{
+                type: String,
+            },
+            postid: {
+                type: String,
+            }
         },
             { timestamps: true }
         )

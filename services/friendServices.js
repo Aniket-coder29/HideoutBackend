@@ -7,12 +7,12 @@ const checkSentRequest = async (id, friendId) => {
     try {
         const check = await Request.findOne(filter).clone().exec();
         if (check) {
-            for(let i of check.sentRequests){
-                if(i===friendId){
-            return {
-                status: 1,
-                data: true
-            }
+            for (let i of check.sentRequests) {
+                if (i === friendId) {
+                    return {
+                        status: 1,
+                        data: true
+                    }
                 }
             }
         }
@@ -33,12 +33,12 @@ const checkRecievedRequest = async (id, friendId) => {
     try {
         const check = await Request.findOne(filter).clone().exec();
         if (check) {
-            for(let i of check.requests){
-                if(i===friendId){
-            return {
-                status: 1,
-                data: true
-            }
+            for (let i of check.requests) {
+                if (i === friendId) {
+                    return {
+                        status: 1,
+                        data: true
+                    }
                 }
             }
         }
@@ -170,12 +170,12 @@ const checkFriends = async (id, friendId) => {
     try {
         const check = await Friend.findOne(filter).clone().exec();
         if (check) {
-            for(let i of check.friends){
-                if(i===friendId){
-            return {
-                status: 1,
-                data: true
-            }
+            for (let i of check.friends) {
+                if (i === friendId) {
+                    return {
+                        status: 1,
+                        data: true
+                    }
                 }
             }
         }

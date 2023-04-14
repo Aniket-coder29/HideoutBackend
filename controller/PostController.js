@@ -2,7 +2,7 @@ const Post = require('../models/post');
 const Friend = require('../models/friend');
 const comments = require('../models/comment');
 const { getFriends } = require('../services/friendServices');
-const { getPost, getAllPost, compilePosts2, delete_post } = require('../services/postServices');
+const { getPost, getAllPost, compilePosts2, delete_post, getComments } = require('../services/postServices');
 const { getMinDetails } = require('../services/userServices');
 
 const AllPosts = async (req, res, next) => {
@@ -29,9 +29,19 @@ const getAllPosts = async (req, res, next) => {
         try {
             const user = res.locals.user;
             const posts = await getAllPost(user.uid)
-            // console.log("get posts in post controller",posts)
             if (posts.status) {
-                return res.status(200).json(posts.data);
+                let post = []
+                for (let i of posts.data) {
+                    const comment = await getComments(i._id)
+                    console.log(comment)
+                    if (comment.status) {
+                        post.push({ ...i, ...comment.data })
+                    }
+                    else {
+                        post.push(i)
+                    }
+                }
+                return res.status(200).json(post);
             }
             else {
                 return res.status(500).json(posts.error)
@@ -64,7 +74,18 @@ const getUserPost = async (req, res, next) => {
             // console.log(details)
             const post = await compilePosts2(details.data)
             // console.log(post)
-            return res.status(200).json(post);
+            let posts = []
+            for (let i of post) {
+                const comment = await getComments(i._id)
+                console.log(comment)
+                if (comment.status) {
+                    posts.push({ ...i, ...comment.data })
+                }
+                else {
+                    posts.push(i)
+                }
+            }
+            return res.status(200).json(posts);
 
         } catch (error) {
             console.log(error)
@@ -177,6 +198,37 @@ const countPost = async (req, res) => {
     }
 }
 
+const checkLike = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const id = req.query.id, postid = req.query.postId
+        // console.log(id, postid)
+        try {
+            const findPost = await Post.findOne({ uid: id }, { posts: { $elemMatch: { _id: postid } } }).clone().exec();
+            // console.log(findPost)
+            if(findPost){
+                const posts = findPost.posts
+                if(posts.length){
+                    for(let i of posts[0].likes){
+                        if(i==user.uid){
+                            return res.status(200).json(true)
+                        }
+                    }
+                }
+            }
+            return res.status(200).json(false)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const addLike = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
@@ -257,6 +309,31 @@ const allComments = async (req, res) => {
     }
 }
 
+const getAllCommentsOfPost = async (req, res) => {
+    if (res.locals.user) {
+        const postid = req.query.postId
+        try {
+            const findPost = await getComments(postid)
+            if (findPost.status) {
+                res.status(200).json({ comments: findPost.data })
+            }
+            else {
+                console.log("no request ever")
+                res.status(200).json({ comments: [] })
+            }
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    }
+    else {
+        //redirect to login
+        res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
 const addComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
@@ -315,7 +392,7 @@ const countComments = async (req, res) => {
             if (!findpost) {
                 return res.status(200).json(0);
             }
-            else{
+            else {
                 return res.status(200).json(findpost.comments.length)
             }
         } catch (error) {
@@ -394,4 +471,4 @@ const countReplies = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, countPost, addLike, deleteLike, countLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, allComments }
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, countPost, addLike, deleteLike, countLike, checkLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, allComments, getAllCommentsOfPost }
