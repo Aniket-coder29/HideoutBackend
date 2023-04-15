@@ -1,6 +1,7 @@
 const Friend = require('../models/friend');
 const Request = require('../models/request')
 const { deleteRequest, addFriend, addRequest } = require('../services/friendServices');
+const { receivedReq, acceptReq } = require('../services/notificationServices');
 const { getMinDetails } = require('../services/userServices');
 
 const getAllSentRequests = async (req, res, next) => {
@@ -130,6 +131,7 @@ const makeFriendRequest = async (req, res, next) => {
             return res.status(500).json({ "error": "no friend id found" });
         }
         const addReq = await addRequest(user.uid, friendId)
+        const sendNotif = await receivedReq(user.uid, friendId)
         return res.status(200).json({ "Status": "Success" })
     }
     else {
@@ -184,6 +186,9 @@ const acceptFriendRequest = async (req, res, next) => {
         if (!del) {
             return res.status(500).json(err)
         }
+
+        const sendNotif = await acceptReq(user.uid, friendId)
+
         return res.status(200).json({ "Status": "Success" })
     }
     else {

@@ -4,6 +4,7 @@ const comments = require('../models/comment');
 const { getFriends } = require('../services/friendServices');
 const { getPost, getAllPost, compilePosts2, delete_post, getComments } = require('../services/postServices');
 const { getMinDetails } = require('../services/userServices');
+const { friendPosted, postLiked, postCommented, replyOnCommentInPost } = require('../services/notificationServices');
 
 const AllPosts = async (req, res, next) => {
     if (res.locals.user) {
@@ -116,6 +117,13 @@ const makePost = async (req, res) => {
             }
             const addPost = await Post.findOneAndUpdate(filter, { $push: { posts: req.body } }).clone().exec();
             // console.log(addPost)
+
+            const posts = await Post.findOne(filter, 'posts').clone().exec()
+
+            const post = posts[posts.length - 1]
+
+            const sendNotif = await friendPosted(user.uid, post._id)
+
             return res.status(200).json({
                 status: 1
             })
@@ -206,11 +214,11 @@ const checkLike = async (req, res) => {
         try {
             const findPost = await Post.findOne({ uid: id }, { posts: { $elemMatch: { _id: postid } } }).clone().exec();
             // console.log(findPost)
-            if(findPost){
+            if (findPost) {
                 const posts = findPost.posts
-                if(posts.length){
-                    for(let i of posts[0].likes){
-                        if(i==user.uid){
+                if (posts.length) {
+                    for (let i of posts[0].likes) {
+                        if (i == user.uid) {
                             return res.status(200).json(true)
                         }
                     }
@@ -236,6 +244,9 @@ const addLike = async (req, res) => {
         console.log(id, postid)
         try {
             const updatePost = await Post.findOneAndUpdate({ uid: id, posts: { $elemMatch: { _id: postid } } }, { $addToSet: { 'posts.$.likes': user.uid } }).clone().exec();
+
+            const sendNotif = await postLiked(id, postid, user.uid)
+
             // console.log(updatePost)
             return res.status(200).json("Like added")
         } catch (error) {
@@ -315,7 +326,7 @@ const getAllCommentsOfPost = async (req, res) => {
         try {
             const findPost = await getComments(postid)
             if (findPost.status) {
-                res.status(200).json(findPost.data )
+                res.status(200).json(findPost.data)
             }
             else {
                 console.log("no comment ever")
@@ -337,7 +348,7 @@ const getAllCommentsOfPost = async (req, res) => {
 const addComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
-        const postid = req.query.postId
+        const id = req.query.id, postid = req.query.postId
         console.log(postid)
         try {
             const findpost = await comments.findOne({ postid: postid }).clone().exec()
@@ -348,6 +359,7 @@ const addComment = async (req, res) => {
             }
             const updatePost = await comments.findOneAndUpdate({ postid: postid }, { $addToSet: { comments: req.body } }).clone().exec();
             console.log(updatePost)
+            const sendNotif = await postCommented(id, postid, user.uid)
             return res.status(200).json("Comment added")
         } catch (error) {
             return res.status(500).json(error)
@@ -410,11 +422,12 @@ const countComments = async (req, res) => {
 const addReply = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
-        const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId
+        const id = req.query.id, postid = req.query.postId, commentId = req.query.commentId, commenterId = req.query.commenterId
         console.log(postid, commentId)
         try {
             const updateReply = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentId } } }, { $push: { 'comments.$.replies': req.body } }).clone().exec()
             // console.log(updateReply)
+            const sendNotif = await replyOnCommentInPost(id, postid, commenterId, user.uid)
             return res.status(200).json("Successfully added")
         } catch (error) {
             return res.status(500).json(error)

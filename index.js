@@ -7,6 +7,7 @@ const middleware = require('./middleware/index')
 const userRoute = require('./routes/userRoute')
 const friendRoute = require('./routes/friendRoute')
 const postRoute = require('./routes/postRoute')
+const notificationRoute = require('./routes/notificationRoute')
 require('./config/db')
 require('./config/firebase')
 
@@ -20,6 +21,7 @@ app.get('/',(req,res)=>res.send('THIS IS BACKEND'))
 app.use('/api/user',middleware.decodeToken,userRoute);
 app.use('/api/friend',middleware.decodeToken,friendRoute);
 app.use('/api/post',middleware.decodeToken,postRoute);
+app.use('/api/notification',middleware.decodeToken,notificationRoute);
 
 app.listen(port,()=>console.log('backend running at '+port))
 

@@ -25,28 +25,6 @@ const postSchema = new mongoose.Schema({
                     type: String,
                 }
             ],
-            // comments: [
-            //     {
-            //         uid: {
-            //             type: String,
-            //             required: true,
-            //         },
-            //         comment: {
-            //             type: String,
-            //         },
-            //         replies: [
-            //             {
-            //                 uid: {
-            //                     type: String,
-            //                     required: true,
-            //                 },
-            //                 reply: {
-            //                     type: String,
-            //                 },
-            //             },
-            //         ]
-            //     }
-            // ],
         },
             { timestamps: true })
     ],

@@ -15,7 +15,7 @@ const notificationSchema = new mongoose.Schema({
             uid: {
                 type: String,
             },
-            postUid:{
+            postUid: {
                 type: String,
             },
             postid: {
@@ -30,14 +30,14 @@ const notificationSchema = new mongoose.Schema({
 
 const notifications = mongoose.model('notifications', notificationSchema);
 
-module.exports(notifications);
+module.exports = notifications;
 
 
 
 // received req ->1  name who sent
 // accept req->became friends->2 name who accepted 
-// friend posted-> name who posted, (id,postid)
-// friend liked->3 name who liked, (id,postid)
-// friend commented->4 name who commented, (id,postid)
-// friend replys->5.1-> name who replied,(id,postid) to jiska post hai
-//5.2-> name who replied,(id,postid) to jiska comment hai
+// friend posted->3 name who posted, (id,postid)
+// friend liked->4 name who liked, (id,postid)
+// friend commented->5 name who commented, (id,postid)
+// friend replys->6.1-> name who replied,(id,postid) to jiska post hai
+//6.2-> name who replied,(id,postid) to jiska comment hai
