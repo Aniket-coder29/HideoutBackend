@@ -484,4 +484,26 @@ const countReplies = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, countPost, addLike, deleteLike, countLike, checkLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, allComments, getAllCommentsOfPost }
+const getRepliesOfComment = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const postid = req.query.postId, commentId = req.query.commentId
+        console.log(postid, commentId)
+        try {
+            const find = await comments.findOne({ postid: postid }, { comments: { $elemMatch: { _id: commentId } } }).clone().exec();
+            // console.log(find.comments[0].replies)
+
+            return res.status(200).json(find.comments[0].replies)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, countPost, addLike, deleteLike, countLike, checkLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, getRepliesOfComment, allComments, getAllCommentsOfPost }
