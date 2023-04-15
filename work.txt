@@ -3,9 +3,5 @@
 //jobs ->ud
 //youtube
 
-add like to comment
-delete like
-count like
-check like
 search results inside possibleConnections
 search overall
