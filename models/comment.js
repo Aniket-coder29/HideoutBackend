@@ -16,6 +16,11 @@ const commentSchema = new mongoose.Schema({
             comment: {
                 type: String,
             },
+            likes:[
+                {
+                    type:String,
+                }
+            ],
             replies: [
                 new mongoose.Schema({
                     uid: {

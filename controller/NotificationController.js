@@ -4,7 +4,8 @@ const getNotificationData = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         try {
-            const data = notifications.find({}).clone().exec();
+            const data = await notifications.find({}).clone().exec();
+            console.log(data)
             return res.status(200).json(data)
         } catch (error) {
             return res.status(500).json(error)
@@ -24,7 +25,8 @@ const getNotificationOfUser = async (req, res) => {
         const uid = req.query.uid ? req.query.uid : user.uid
         const filter = { uid: uid }
         try {
-            const data = notifications.findOne(filter).clone().exec();
+            const data = await notifications.findOne(filter).clone().exec();
+            console.log(data)
             return res.status(200).json(data)
         } catch (error) {
             return res.status(500).json(error)

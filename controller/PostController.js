@@ -506,4 +506,101 @@ const getRepliesOfComment = async (req, res) => {
     }
 }
 
-module.exports = { makePost, getUserPost, getAllPosts, deletePost, countPost, addLike, deleteLike, countLike, checkLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, getRepliesOfComment, allComments, getAllCommentsOfPost }
+const addLikeToComment = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const commentid = req.query.commentId, postid = req.query.postId
+        console.log(id, postid)
+        try {
+            const updateComment = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentid } } }, { $addToSet: { 'comments.$.likes': user.uid } }).clone().exec();
+
+            // const sendNotif = await postLiked(id, postid, user.uid)
+
+            // console.log(updatePost)
+            return res.status(200).json("Like added")
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+const deleteLikeFromComment = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const commentid = req.query.commentId, postid = req.query.postId
+        console.log(id, postid)
+        try {
+            const updateComment = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentid } } }, { $pull: { 'comments.$.likes': user.uid } }).clone().exec();
+            // console.log(updatePost)
+            return res.status(200).json("Like removed")
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+const countLikeOfComment = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const commentid = req.query.commentId, postid = req.query.postId
+        console.log(id, postid)
+        try {
+            const findPost = await comments.findOne({ postid: postid }, { comments: { $elemMatch: { _id: commentid } } }).clone().exec();
+            // console.log(findPost)
+            return res.status(200).json(findPost.comments[0].likes.length)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+const checkLikeOfComment = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const commentid = req.query.commentId, postid = req.query.postId
+        // console.log(id, postid)
+        try {
+            const findPost = await comments.findOne({postid:postid }, { comments: { $elemMatch: { _id: commentid } } }).clone().exec();
+            // console.log(findPost)
+            if (findPost) {
+                const comments = findPost.comments
+                if (comments.length) {
+                    for (let i of comments[0].likes) {
+                        if (i == user.uid) {
+                            return res.status(200).json(true)
+                        }
+                    }
+                }
+            }
+            return res.status(200).json(false)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { makePost, getUserPost, getAllPosts, deletePost, countPost, addLike, deleteLike, countLike, checkLike, addComment, deleteComment, countComments, AllPosts, addReply, deleteReply, countReplies, getRepliesOfComment, allComments, getAllCommentsOfPost, addLikeToComment, deleteLikeFromComment, countLikeOfComment, checkLikeOfComment }
