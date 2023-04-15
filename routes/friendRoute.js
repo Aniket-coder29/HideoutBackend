@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { getAllFriends, removeFriend, getCountOfFriends, possibleConnections, checkFriend, allFriendsData } = require('../controller/FriendController');
+const { getAllFriends, removeFriend, getCountOfFriends, possibleConnections, checkFriend, allFriendsData, searchPossibleConnections } = require('../controller/FriendController');
 const { makeFriendRequest, deleteFriendRequest, acceptFriendRequest, getAllRequests, rejectFriendRequest, getAllSentRequests, AllRequests, countAllSentReqs, countAllRequests } = require('../controller/RequestController')
 
 router.get('/makeFriendReq', makeFriendRequest);
@@ -31,5 +31,7 @@ router.get('/checkFriend', checkFriend)
 router.get('/getAllFriendsData', allFriendsData)
 
 router.get('/getAllRequestData', AllRequests)
+
+router.get('/searchInFindFriends', searchPossibleConnections)
 
 module.exports = router;

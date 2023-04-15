@@ -1,8 +1,8 @@
 const friend = require("../models/friend");
 const User = require('../models/user');
 const Request = require('../models/request')
-const { countFriends, getFriends, deleteFriend, checkFriends } = require("../services/friendServices");
-const { getMinDetails } = require("../services/userServices");
+const { countFriends, getFriends, deleteFriend, checkFriends, findFriends } = require("../services/friendServices");
+const { getMinDetails, searchUsers } = require("../services/userServices");
 
 const checkFriend = async (req, res, next) => {
     if (res.locals.user) {
@@ -114,43 +114,49 @@ const possibleConnections = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         try {
-            const allUsers = await User.find({}, "uid").clone().exec();
-            // console.log(allUsers)
-            const friends = await friend.findOne({ uid: user.uid }, "friends").clone().exec();
-            // console.log(friends)
-            const reqUsers = await Request.findOne({ uid: user.uid }, "sentRequests").clone().exec();
-            const reqsUsers = await Request.findOne({ uid: user.uid }, "requests").clone().exec();
-            // console.log(reqUsers)
-            // console.log(reqsUsers)
-            let ids = new Set()
-            ids.add(user.uid)
-            let ans = []
-            if (reqUsers) {
-                for (let i of reqUsers.sentRequests) {
-                    ids.add(i)
-                }
+            // const allUsers = await User.find({}, "uid").clone().exec();
+            // // console.log(allUsers)
+            // const friends = await friend.findOne({ uid: user.uid }, "friends").clone().exec();
+            // // console.log(friends)
+            // const reqUsers = await Request.findOne({ uid: user.uid }, "sentRequests").clone().exec();
+            // const reqsUsers = await Request.findOne({ uid: user.uid }, "requests").clone().exec();
+            // // console.log(reqUsers)
+            // // console.log(reqsUsers)
+            // let ids = new Set()
+            // ids.add(user.uid)
+            // let ans = []
+            // if (reqUsers) {
+            //     for (let i of reqUsers.sentRequests) {
+            //         ids.add(i)
+            //     }
+            // }
+            // if (reqsUsers) {
+            //     for (let i of reqsUsers.requests) {
+            //         ids.add(i)
+            //     }
+            // }
+            // if (friends) {
+            //     for (let i of friends.friends) {
+            //         ids.add(i)
+            //     }
+            // }
+            // for (let i of allUsers) {
+            //     let iniSize = ids.size
+            //     ids.add(i.uid)
+            //     let newSize = ids.size
+            //     if (newSize > iniSize) {
+            //         ans.push(i.uid)
+            //     }
+            // }
+            const ans = await findFriends(user.uid)
+            if(!ans.status){
+                return res.status(500).json({ error: ans.error })
             }
-            if (reqsUsers) {
-                for (let i of reqsUsers.requests) {
-                    ids.add(i)
-                }
-            }
-            if (friends) {
-                for (let i of friends.friends) {
-                    ids.add(i)
-                }
-            }
-            for (let i of allUsers) {
-                let iniSize = ids.size
-                ids.add(i.uid)
-                let newSize = ids.size
-                if (newSize > iniSize) {
-                    ans.push(i.uid)
-                }
-            }
+            console.log(ans)
             let ans1 = []
-            for (let i of ans) {
+            for (let i of ans.data) {
                 const details = await getMinDetails(i)
+                if(details.status)
                 ans1.push(details.data)
             }
             return res.status(200).json(ans1)
@@ -165,6 +171,47 @@ const possibleConnections = async (req, res) => {
         })
     }
 
+}
+
+const searchPossibleConnections = async (req, res) => {
+    if (res.locals.user) {
+        const user = res.locals.user
+        const name = req.query.name
+        try {
+            const ids = await findFriends(user.uid)
+            if(!ids.status){
+                res.status(500).json(ids.error)
+            }
+            const idss = await searchUsers(name)
+            if(!idss.status){
+                res.status(500).json(idss.error)
+            }
+            let ret = []
+            for(let i of ids.data){
+                const oldsz = idss.data.size
+                idss.data.add(i)
+                const newsz = idss.data.size
+                if(newsz===oldsz){
+                    ret.push(i)
+                }
+            }
+            let ans = []
+            for(let i of ret){
+                const detail = await getMinDetails(i)
+            if(detail.status)
+                ans.push(detail.data)
+            }
+            return res.status(200).json(ans)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    } else {
+        //redirect to login
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
 }
 
 const allFriendsData = async (req, res) => {
@@ -186,4 +233,4 @@ const allFriendsData = async (req, res) => {
     }
 }
 
-module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections, checkFriend, allFriendsData }
+module.exports = { getAllFriends, removeFriend, getCountOfFriends, possibleConnections, checkFriend, allFriendsData, searchPossibleConnections }

@@ -1,5 +1,6 @@
-const Friend = require('../models/friend');
-const Request = require('../models/request');
+const Friend = require('../models/friend')
+const User = require('../models/user')
+const Request = require('../models/request')
 const { getMinDetails } = require('./userServices');
 
 const checkSentRequest = async (id, friendId) => {
@@ -232,4 +233,57 @@ const getFriends = async (id) => {
         }
     }
 }
-module.exports = { addRequest, deleteRequest, addFriend, deleteFriend, checkFriends, checkSentRequest, checkRecievedRequest, countFriends, getFriends }
+
+const findFriends = async (id) => {
+    try {
+        const allUsers = await User.find({}, "uid").clone().exec();
+        // console.log(allUsers)
+        const friends = await Friend.findOne({ uid: id }, "friends").clone().exec();
+        // console.log(friends)
+        const reqUsers = await Request.findOne({ uid: id }, "sentRequests").clone().exec();
+        const reqsUsers = await Request.findOne({ uid: id }, "requests").clone().exec();
+        // console.log(reqUsers)
+        // console.log(reqsUsers)
+        let ids = new Set()
+        ids.add(id)
+        let ans = []
+        if (reqUsers) {
+            for (let i of reqUsers.sentRequests) {
+                ids.add(i)
+            }
+        }
+        if (reqsUsers) {
+            for (let i of reqsUsers.requests) {
+                ids.add(i)
+            }
+        }
+        if (friends) {
+            for (let i of friends.friends) {
+                ids.add(i)
+            }
+        }
+        for (let i of allUsers) {
+            let iniSize = ids.size
+            ids.add(i.uid)
+            let newSize = ids.size
+            if (newSize > iniSize) {
+                ans.push(i.uid)
+            }
+        }
+        // let ans1 = []
+        // for (let i of ans) {
+        //     const details = await getMinDetails(i)
+        //     ans1.push(details.data)
+        // }
+        return {
+            status: 1,
+            data: ans
+        }
+    } catch (error) {
+        return {
+            status: 0,
+            error: error
+        }
+    }
+}
+module.exports = { addRequest, deleteRequest, addFriend, deleteFriend, checkFriends, checkSentRequest, checkRecievedRequest, countFriends, getFriends, findFriends }

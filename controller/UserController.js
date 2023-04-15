@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { getDetails, getMinDetails } = require('../services/userServices');
+const { getDetails, getMinDetails, searchUsers } = require('../services/userServices');
 
 const getUserDetails = async (req, res) => {
     if (res.locals.user) {
@@ -220,4 +220,32 @@ const checkUser = async (req, res) => {
     }
 };
 
-module.exports = { checkUser, getAllUsers, getUserDetails, createUser, deleteUser, updateUser, getMiniDetails, getAllUserData };
+const searchUser = async (req, res) => {
+    if(res.locals.user){
+        const user = res.locals.user
+        const name = req.query.name
+        try {
+            const ret = await searchUsers(name)
+            if(!ret.status){
+                return res.status(500).json(res.error)
+            }
+            let ans = []
+            for(let i of ret.data){
+                const detail = await getMinDetails(i)
+                if(detail.status)
+                    ans.push(detail.data)
+            }
+            return res.status(200).json(ans)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    }
+    else{
+        return res.status(404).json({
+            status: 0,
+            error: 'Not logged in',
+        })
+    }
+}
+
+module.exports = { checkUser, getAllUsers, getUserDetails, createUser, deleteUser, updateUser, getMiniDetails, getAllUserData, searchUser };
