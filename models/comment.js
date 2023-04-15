@@ -30,6 +30,11 @@ const commentSchema = new mongoose.Schema({
                     reply: {
                         type: String,
                     },
+                    likes:[
+                        {
+                            type:String,
+                        }
+                    ]
                 },
                     { timestamps: true }),
             ]

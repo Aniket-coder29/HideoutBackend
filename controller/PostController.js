@@ -118,8 +118,8 @@ const makePost = async (req, res) => {
             const addPost = await Post.findOneAndUpdate(filter, { $push: { posts: req.body } }).clone().exec();
             // console.log(addPost)
 
-            const posts = await Post.findOne(filter, 'posts').clone().exec()
-
+            const posts1 = await Post.findOne(filter, 'posts').clone().exec()
+            const posts = posts1.posts
             const post = posts[posts.length - 1]
 
             const sendNotif = await friendPosted(user.uid, post._id)
@@ -534,7 +534,7 @@ const deleteLikeFromComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const commentid = req.query.commentId, postid = req.query.postId
-        console.log(id, postid)
+        console.log(commentid, postid)
         try {
             const updateComment = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentid } } }, { $pull: { 'comments.$.likes': user.uid } }).clone().exec();
             // console.log(updatePost)
@@ -576,7 +576,7 @@ const checkLikeOfComment = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         const commentid = req.query.commentId, postid = req.query.postId
-        // console.log(commentid, postid)
+        console.log(commentid, postid)
         try {
             const findPost = await comments.findOne({ postid: postid }, { comments: { $elemMatch: { _id: commentid } } }).clone().exec();
             // console.log(findPost)
@@ -609,11 +609,11 @@ const addLikeToReply = async (req, res) => {
         const commentid = req.query.commentId, postid = req.query.postId, replyid = req.query.replyId
         console.log(commentid, postid, replyid)
         try {
-            const updateComment = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentid, replies: { $elemMatch: { _id: replyid } } } } }, { $addToSet: { 'comments.$.replies.$.likes': user.uid } }).clone().exec();
+            const updateComment = await comments.findOneAndUpdate({ postid: postid, comments: { $elemMatch: { _id: commentid, replies: { $elemMatch: { _id: replyid } } }}  }, { $addToSet: { 'comments.$.replies.$.likes': user.uid } }).clone().exec();
 
             // const sendNotif = await postLiked(id, postid, user.uid)
 
-            // console.log(updatePost)
+            console.log(updateComment)
             return res.status(200).json("Like added")
         } catch (error) {
             return res.status(500).json(error)
