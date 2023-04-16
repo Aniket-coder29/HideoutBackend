@@ -12,11 +12,11 @@ const getAllSentRequests = async (req, res, next) => {
         try {
             const findUser = await Request.findOne(filter).clone().exec()
             if (findUser) {
-                console.log(findUser)
+                // console.log(findUser)
                 return res.status(200).json(findUser.sentRequests)
             }
             else {
-                console.log("no request ever")
+                // console.log("no request ever")
                 return res.status(200).json([])
             }
         } catch (error) {
@@ -40,11 +40,11 @@ const countAllSentReqs = async (req, res) => {
         try {
             const findUser = await Request.findOne(filter).clone().exec()
             if (findUser) {
-                console.log(findUser)
+                // console.log(findUser)
                 return res.status(200).json(findUser.sentRequests.length)
             }
             else {
-                console.log("no request ever")
+                // console.log("no request ever")
                 return res.status(200).json(0)
             }
         } catch (error) {
@@ -68,7 +68,7 @@ const getAllRequests = async (req, res, next) => {
         try {
             const findUser = await Request.findOne(filter).clone().exec()
             if (findUser) {
-                console.log(findUser)
+                // console.log(findUser)
                 let reqs = []
                 for (let i of findUser.requests) {
                     const detail = await getMinDetails(i)
@@ -79,7 +79,7 @@ const getAllRequests = async (req, res, next) => {
                 return res.status(200).json(reqs)
             }
             else {
-                console.log("no request ever")
+                // console.log("no request ever")
                 return res.status(200).json([])
             }
         } catch (error) {
@@ -103,11 +103,11 @@ const countAllRequests = async (req, res) => {
         try {
             const findUser = await Request.findOne(filter).clone().exec()
             if (findUser) {
-                console.log(findUser)
+                // console.log(findUser)
                 return res.status(200).json(findUser.requests.length)
             }
             else {
-                console.log("no request ever")
+                // console.log("no request ever")
                 return res.status(200).json(0)
             }
         } catch (error) {
@@ -176,12 +176,12 @@ const acceptFriendRequest = async (req, res, next) => {
         if (add1.status === 0) {
             return res.status(500).json(add1.error)
         }
-        console.log(add1)
+        // console.log(add1)
         const add2 = await addFriend(friendId, user.uid)
         if (add2.status === 0) {
             return res.status(500).json(add2.error)
         }
-        console.log(add2)
+        // console.log(add2)
         const del = await deleteRequest(friendId, user.uid)
         if (!del) {
             return res.status(500).json(err)

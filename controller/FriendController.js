@@ -67,7 +67,7 @@ const removeFriend = async (req, res, next) => {
             return;
         }
         const del = await deleteFriend(user.uid, friendId);
-        console.log(del)
+        // console.log(del)
         if (del.status) {
             return res.status(200).json(del.data)
         }
@@ -115,13 +115,13 @@ const possibleConnections = async (req, res) => {
         const user = res.locals.user
         try {
             // const allUsers = await User.find({}, "uid").clone().exec();
-            // // console.log(allUsers)
+            // console.log(allUsers)
             // const friends = await friend.findOne({ uid: user.uid }, "friends").clone().exec();
-            // // console.log(friends)
+            // console.log(friends)
             // const reqUsers = await Request.findOne({ uid: user.uid }, "sentRequests").clone().exec();
             // const reqsUsers = await Request.findOne({ uid: user.uid }, "requests").clone().exec();
-            // // console.log(reqUsers)
-            // // console.log(reqsUsers)
+            // console.log(reqUsers)
+            // console.log(reqsUsers)
             // let ids = new Set()
             // ids.add(user.uid)
             // let ans = []
@@ -152,7 +152,7 @@ const possibleConnections = async (req, res) => {
             if(!ans.status){
                 return res.status(500).json({ error: ans.error })
             }
-            console.log(ans)
+            // console.log(ans)
             let ans1 = []
             for (let i of ans.data) {
                 const details = await getMinDetails(i)

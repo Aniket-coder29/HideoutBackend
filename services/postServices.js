@@ -90,7 +90,7 @@ const delete_post = async (id, postid) => {
     const filter = { uid: id }
     try {
         const delPost = await Post.findOneAndUpdate(filter, { $pull: { posts: { _id: postid } } }).clone().exec();
-        console.log(delPost)
+        // console.log(delPost)
         return {
             status: 1
         }

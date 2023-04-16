@@ -7,10 +7,10 @@ const addNotification = async (filter, data) => {
         if (!findUser) {
             const newUser = new notifications(filter)
             const save = await newUser.save()
-            console.log(save)
+            // console.log(save)
         }
         const update = await notifications.findOneAndUpdate(filter, { $push: { notifications: data } }).clone().exec()
-        console.log(update)
+        // console.log(update)
         return {
             status: 1
         }

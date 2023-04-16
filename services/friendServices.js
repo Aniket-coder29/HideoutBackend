@@ -63,18 +63,18 @@ const addRequest = async (id, friendId) => {
         if (!findUser1) {
             const newReq = new Request(filter1);
             const save = await newReq.save();
-            console.log(save)
+            // console.log(save)
         }
         const updateReq1 = await Request.findOneAndUpdate(filter1, { $addToSet: { requests: id } }).clone().exec()
-        console.log(updateReq1)
+        // console.log(updateReq1)
         const findUser2 = await Request.findOne(filter2).clone().exec()
         if (!findUser2) {
             const newReq = new Request(filter2);
             const save = await newReq.save();
-            console.log(save)
+            // console.log(save)
         }
         const updateReq2 = await Request.findOneAndUpdate(filter2, { $addToSet: { sentRequests: friendId } }).clone().exec()
-        console.log(updateReq2)
+        // console.log(updateReq2)
         return {
             status: 1
         }
@@ -106,17 +106,17 @@ const deleteRequest = async (id, friendId) => {
 
 const addFriend = async (id, friendId) => {
     const filter = { uid: id }
-    console.log(id, "adding", friendId);
+    // console.log(id, "adding", friendId);
     try {
         const user = await Friend.findOne(filter).clone().exec()
-        console.log(user)
+        // console.log(user)
         if (!user) {
             const newFriend = new Friend(filter);
             const save = await newFriend.save();
-            console.log(save)
+            // console.log(save)
         }
         const friendAdd = await Friend.findOneAndUpdate(filter, { $addToSet: { friends: friendId } }).clone().exec()
-        console.log(friendAdd)
+        // console.log(friendAdd)
         if (!friendAdd) {
             return {
                 status: 0,
@@ -141,18 +141,18 @@ const deleteFriend = async (id, friendId) => {
         if (!finduser1) {
             const newFriend = new Friend(filter);
             const save = await newFriend.save();
-            console.log(save)
+            // console.log(save)
         }
         const update1 = await Friend.findOneAndUpdate(filter1, { $pull: { friends: friendId } }).clone().exec()
-        console.log(update1)
+        // console.log(update1)
         const finduser2 = await Friend.findOne(filter2).clone().exec();
         if (!finduser2) {
             const newFriend = new Friend(filter2);
             const save = await newFriend.save();
-            console.log(save)
+            // console.log(save)
         }
         const update2 = await Friend.findOneAndUpdate(filter2, { $pull: { friends: id } }).clone().exec()
-        console.log(update2)
+        // console.log(update2)
         return {
             status: 1,
             data: "Successfully deleted"
@@ -197,7 +197,7 @@ const countFriends = async (id) => {
     try {
         const friends = await Friend.findOne(filter, "friends").clone().exec();
         // console.log(friends.friends.length)
-        console.log(friends)
+        // console.log(friends)
         if (!friends) {
             return {
                 status: 1,
@@ -218,10 +218,10 @@ const countFriends = async (id) => {
 
 const getFriends = async (id) => {
     const filter = { uid: id }
-    console.log("get Friends in friend services")
+    // console.log("get Friends in friend services")
     try {
         const getFriend = await Friend.findOne(filter).clone().exec()
-        console.log(getFriend)
+        // console.log(getFriend)
         return {
             status: 1,
             data: getFriend

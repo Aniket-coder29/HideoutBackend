@@ -141,7 +141,7 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     if (res.locals.user) {
-        console.log(req.body)
+        // console.log(req.body)
         const user = res.locals.user;
         const uid = req.query.uid ? req.query.uid : user.uid
         const filter = { uid: uid };
@@ -188,7 +188,7 @@ const checkUser = async (req, res) => {
         const user = res.locals.user;
         const email = user.email;
         const findEmail = await User.find({ email: email }).clone().exec();
-        console.log(findEmail)
+        // console.log(findEmail)
         if (findEmail.length > 0) {
             const userDetail = findEmail[0];
             if (userDetail.name && userDetail.name !== "") {
