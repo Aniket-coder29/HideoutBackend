@@ -114,40 +114,6 @@ const possibleConnections = async (req, res) => {
     if (res.locals.user) {
         const user = res.locals.user
         try {
-            // const allUsers = await User.find({}, "uid").clone().exec();
-            // console.log(allUsers)
-            // const friends = await friend.findOne({ uid: user.uid }, "friends").clone().exec();
-            // console.log(friends)
-            // const reqUsers = await Request.findOne({ uid: user.uid }, "sentRequests").clone().exec();
-            // const reqsUsers = await Request.findOne({ uid: user.uid }, "requests").clone().exec();
-            // console.log(reqUsers)
-            // console.log(reqsUsers)
-            // let ids = new Set()
-            // ids.add(user.uid)
-            // let ans = []
-            // if (reqUsers) {
-            //     for (let i of reqUsers.sentRequests) {
-            //         ids.add(i)
-            //     }
-            // }
-            // if (reqsUsers) {
-            //     for (let i of reqsUsers.requests) {
-            //         ids.add(i)
-            //     }
-            // }
-            // if (friends) {
-            //     for (let i of friends.friends) {
-            //         ids.add(i)
-            //     }
-            // }
-            // for (let i of allUsers) {
-            //     let iniSize = ids.size
-            //     ids.add(i.uid)
-            //     let newSize = ids.size
-            //     if (newSize > iniSize) {
-            //         ans.push(i.uid)
-            //     }
-            // }
             const ans = await findFriends(user.uid)
             if(!ans.status){
                 return res.status(500).json({ error: ans.error })

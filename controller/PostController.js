@@ -187,13 +187,13 @@ const getSpecificPostOfUser = async (req, res) => {
             const details = await getMinDetails(uid)
             let post = await Post.findOne({ uid: uid }, { posts: { $elemMatch: { _id: postid } } }).clone().exec()
             let posts = {}
-            if(post){
-                post=post.posts
-                if(post.length){
-                    post=post[0];
+            if (post) {
+                post = post.posts
+                if (post.length) {
+                    post = post[0];
                     const comment = await getComments(post._id)
-                    if (comment.status){
-                        posts = {...details.data.toJSON(),...post.toJSON(), ...comment.data}
+                    if (comment.status) {
+                        posts = { ...details.data.toJSON(), ...post.toJSON(), ...comment.data }
                     }
                 }
             }

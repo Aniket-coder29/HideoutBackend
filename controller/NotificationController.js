@@ -26,8 +26,11 @@ const getNotificationOfUser = async (req, res) => {
         const uid = req.query.uid ? req.query.uid : user.uid
         const filter = { uid: uid }
         try {
-            const data = await notifications.findOne(filter).clone().exec();
+            let data = await notifications.findOne(filter).clone().exec();
             // console.log(data)
+            let arr = data.notifications
+            arr.reverse()
+            data.notifications=arr
             return res.status(200).json(data)
         } catch (error) {
             return res.status(500).json(error)
