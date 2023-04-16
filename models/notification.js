@@ -20,6 +20,10 @@ const notificationSchema = new mongoose.Schema({
             },
             postid: {
                 type: String,
+            },
+            seen:{
+                type: Boolean,
+                default: false
             }
         },
             { timestamps: true }
