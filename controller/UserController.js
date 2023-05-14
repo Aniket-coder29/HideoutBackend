@@ -195,18 +195,21 @@ const checkUser = async (req, res) => {
                 return res.status(200).json({
                     User: 1,
                     email: email,
+                    uid: user.uid
                     //1 means already exists, 0 means new user
                 })
             }
             return res.status(200).json({
                 User: 0,
-                email: email
+                email: email,
+                uid: user.uid
                 //1 means already exists, 0 means new user
             })
         }
         else {
             return res.status(200).json({
                 User: -1,
+                uid: user.uid
                 //1 means already exists, 0 means new user
             })
         }
