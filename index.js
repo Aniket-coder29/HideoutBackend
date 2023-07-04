@@ -8,6 +8,7 @@ const userRoute = require('./routes/userRoute')
 const friendRoute = require('./routes/friendRoute')
 const postRoute = require('./routes/postRoute')
 const notificationRoute = require('./routes/notificationRoute')
+const postRoutev2 = require('./routes/postRoutev2')
 require('./config/db')
 require('./config/firebase')
 
@@ -22,6 +23,7 @@ app.use('/api/user',middleware.decodeToken,userRoute);
 app.use('/api/friend',middleware.decodeToken,friendRoute);
 app.use('/api/post',middleware.decodeToken,postRoute);
 app.use('/api/notification',middleware.decodeToken,notificationRoute);
+app.use('/api/v2/post',middleware.decodeToken,postRoutev2);
 
 app.listen(port,()=>console.log('backend running at '+port))
 
